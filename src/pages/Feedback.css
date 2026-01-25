@@ -1,0 +1,569 @@
+/* ============================================
+   FEEDBACK STYLES - AURORA EDITION
+   ============================================ */
+
+/* 1. Unique Background Design: AURORA BOREALIS */
+.feedback-container {
+    width: 100%;
+    min-height: 100vh;
+    /* Ensure full viewport coverage */
+    background: #000;
+
+    /* Center content */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    /* Clear navbar */
+    padding-top: 90px;
+    padding-bottom: 40px;
+    /* Add bottom padding to prevent cut-off on small screens */
+    box-sizing: border-box;
+
+    position: relative;
+    overflow: hidden;
+    /* Keep aurora contained */
+}
+
+/* The Aurora Background */
+.feedback-container::before,
+.feedback-container::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(0, 200, 255, 0.1), transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(189, 0, 255, 0.1), transparent 40%),
+        conic-gradient(from 0deg at 50% 50%, rgba(0, 0, 0, 1) 0deg, rgba(10, 10, 20, 1) 360deg);
+    animation: rotateBackground 60s linear infinite;
+    z-index: 0;
+}
+
+.feedback-container::after {
+    background:
+        radial-gradient(ellipse at center, rgba(0, 255, 128, 0.05) 0%, transparent 70%);
+    animation: pulseAurora 10s ease-in-out infinite alternate;
+    mix-blend-mode: screen;
+}
+
+@keyframes rotateBackground {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulseAurora {
+    0% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+/* 2. Feedback Card - Glassmorphism & Alignment */
+/* 2. Feedback Card - Glassmorphism & Alignment */
+.feedback-card {
+    background: rgba(20, 20, 30, 0.6);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    padding: 40px 30px;
+    /* Reduced from 60px 40px */
+    border-radius: 30px;
+    box-shadow:
+        0 40px 80px rgba(0, 0, 0, 0.6),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    width: 90%;
+    /* Responsive width */
+    max-width: 500px;
+    /* Slightly smaller width */
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    margin: 20px 0;
+    /* Reduced margin */
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+
+    /* Ensure content inside is centered */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Floating Elements Decoration */
+.feedback-card::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #00c8ff, transparent);
+    border-radius: 2px;
+}
+
+/* Typography */
+.gradient-text {
+    font-size: 2.5rem;
+    /* Reduced from 3rem */
+    font-weight: 800;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+    width: 100%;
+    /* Ensure text block takes full width for centering */
+}
+
+.subtitle {
+    color: #94a3b8;
+    margin-bottom: 30px;
+    /* Reduced from 50px */
+    font-size: 1.1rem;
+    font-weight: 400;
+}
+
+/* 3. Gold Stars */
+.star-rating {
+    margin-bottom: 30px;
+    /* Reduced from 40px */
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 10px 15px;
+    /* Reduced padding */
+    border-radius: 50px;
+    display: inline-flex;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.star {
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    padding: 0;
+}
+
+.star:hover {
+    transform: scale(1.4) rotate(5deg);
+}
+
+.star-icon {
+    font-size: 2.5rem;
+    /* Reduced from 3rem */
+    transition: all 0.3s ease;
+}
+
+.star.off .star-icon {
+    color: #3f3f46;
+}
+
+.star.on .star-icon {
+    color: #FFD700;
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
+}
+
+/* Input Fields */
+/* Ensure the form takes full width */
+form {
+    width: 100%;
+}
+
+.form-group {
+    width: 100%;
+}
+
+.feedback-input {
+    width: 100%;
+    box-sizing: border-box;
+    /* Crucial for padding/border not breaking layout */
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 20px;
+    /* Reduced from 24px */
+    border-radius: 20px;
+    font-size: 1rem;
+    resize: none;
+    margin-bottom: 20px;
+    /* Reduced from 30px */
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s;
+    line-height: 1.6;
+}
+
+.feedback-input:focus {
+    outline: none;
+    border-color: #00c8ff;
+    background: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
+    /* Subtle gold hint */
+    transform: translateY(-2px);
+}
+
+/* Submit Button */
+.submit-btn {
+    width: 100%;
+    padding: 22px;
+    background: linear-gradient(135deg, #FFD700 0%, #FF8C00 100%);
+    border: none;
+    border-radius: 20px;
+    color: #000;
+    font-size: 1.2rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 10px 40px rgba(255, 140, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    margin-top: 10px;
+    /* Spacing */
+}
+
+.submit-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: 0.5s;
+}
+
+.submit-btn:hover:not(:disabled) {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 50px rgba(255, 140, 0, 0.5);
+}
+
+.submit-btn:hover::after {
+    left: 100%;
+}
+
+.submit-btn:disabled {
+    background: #27272a;
+    color: #52525b;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* =================================
+   LIGHT MODE SUPPORT
+   ================================= */
+[data-theme='light'] .feedback-container {
+    background: #f8fafc;
+    /* Light background */
+}
+
+/* Hide Aurora in light mode for clean white look */
+[data-theme='light'] .feedback-container::before,
+[data-theme='light'] .feedback-container::after {
+    opacity: 0;
+    display: none;
+}
+
+[data-theme='light'] .feedback-card {
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='light'] .gradient-text {
+    background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+[data-theme='light'] .subtitle {
+    color: #475569;
+}
+
+[data-theme='light'] .feedback-input {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+}
+
+[data-theme='light'] .feedback-input:focus {
+    border-color: #0284c7;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+}
+
+[data-theme='light'] .star.off .star-icon {
+    color: #cbd5e1;
+}
+
+[data-theme='light'] .star-rating {
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* =================================
+   INTERVIEW TIPS SECTION
+   ================================= */
+
+.tips-section {
+    width: 100%;
+    margin: 30px 0;
+    padding: 25px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tips-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.tips-header h2 {
+    color: #fff;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.toggle-tips-btn,
+.show-tips-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.toggle-tips-btn:hover,
+.show-tips-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.show-tips-btn {
+    width: 100%;
+    padding: 15px;
+    margin: 20px 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.tip-card {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.tip-card:hover {
+    transform: translateY(-5px);
+    background: rgba(0, 0, 0, 0.5);
+    border-color: rgba(102, 126, 234, 0.5);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+}
+
+.tip-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.tip-card h3 {
+    color: #fff;
+    font-size: 1rem;
+    margin: 10px 0;
+    font-weight: 600;
+}
+
+.tip-card p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* =================================
+   QUICK ACTIONS
+   ================================= */
+
+.quick-actions {
+    width: 100%;
+    display: flex;
+    gap: 15px;
+    margin: 25px 0;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 18px 20px;
+    border: none;
+    border-radius: 15px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.action-btn.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.action-btn.primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+}
+
+.action-btn.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.action-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+}
+
+/* =================================
+   FEEDBACK FORM SECTION
+   ================================= */
+
+.feedback-form-section {
+    width: 100%;
+    margin-top: 30px;
+    padding: 25px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.feedback-form-section h2 {
+    color: #fff;
+    font-size: 1.5rem;
+    margin: 0 0 5px 0;
+}
+
+.form-subtitle {
+    color: #94a3b8;
+    margin-bottom: 20px;
+    font-size: 1rem;
+}
+
+/* =================================
+   RESPONSIVE DESIGN
+   ================================= */
+
+@media (max-width: 768px) {
+    .feedback-card {
+        padding: 30px 20px;
+        max-width: 95%;
+    }
+
+    .gradient-text {
+        font-size: 2rem;
+    }
+
+    .tips-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quick-actions {
+        flex-direction: column;
+    }
+
+    .action-btn {
+        width: 100%;
+    }
+
+    .tips-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .toggle-tips-btn {
+        width: 100%;
+    }
+}
+
+/* =================================
+   LIGHT MODE - NEW ELEMENTS
+   ================================= */
+
+[data-theme='light'] .tips-section,
+[data-theme='light'] .feedback-form-section {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='light'] .tips-header h2,
+[data-theme='light'] .feedback-form-section h2,
+[data-theme='light'] .tip-card h3 {
+    color: #1e293b;
+}
+
+[data-theme='light'] .tip-card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='light'] .tip-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);
+}
+
+[data-theme='light'] .toggle-tips-btn,
+[data-theme='light'] .show-tips-btn {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+}
+
+[data-theme='light'] .toggle-tips-btn:hover,
+[data-theme='light'] .show-tips-btn:hover {
+    background: #f1f5f9;
+}
+
+[data-theme='light'] .action-btn.secondary {
+    background: #fff;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+}
+
+[data-theme='light'] .action-btn.secondary:hover {
+    background: #f1f5f9;
+}

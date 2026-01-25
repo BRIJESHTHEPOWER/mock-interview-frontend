@@ -1,0 +1,412 @@
+/* ============================================
+   DASHBOARD STYLES - COMMAND CENTER
+   ============================================ */
+
+:root {
+    --bg-deep: #050505;
+    --glass-panel: rgba(20, 20, 30, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --neon-blue: #00c8ff;
+    --neon-purple: #bd00ff;
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+}
+
+.dashboard-container {
+    min-height: 100vh;
+    min-height: 100vh;
+    background: var(--gradient-main);
+    color: var(--text-primary);
+    padding-top: 80px;
+    padding-top: 80px;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Ambient Background Mesh */
+.dashboard-container::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -20%;
+    width: 140%;
+    height: 140%;
+    background: var(--overlay-mesh);
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* HEADER */
+.dashboard-header {
+    background: transparent;
+    padding: 0 40px;
+    height: 80px;
+    /* Aligns with visual, though handled by navbar usually */
+    display: none;
+    /* Hide default header if Navbar is present, or style it minimally */
+}
+
+/* If you want to keep the secondary header: */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--glass-border);
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 10;
+}
+
+.dashboard-header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #fff, var(--neon-blue));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.logout-btn {
+    background: rgba(255, 77, 77, 0.1);
+    border: 1px solid rgba(255, 77, 77, 0.3);
+    color: #ff6b6b;
+    padding: 8px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.logout-btn:hover {
+    background: rgba(255, 77, 77, 0.2);
+    box-shadow: 0 0 15px rgba(255, 77, 77, 0.2);
+}
+
+/* MAIN CONTENT */
+.dashboard-main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 60px 40px;
+    position: relative;
+    z-index: 5;
+}
+
+/* HERO WELCOME SECTION */
+.welcome-section {
+    text-align: center;
+    margin-bottom: 80px;
+    position: relative;
+}
+
+.welcome-section h2 {
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -2px;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.welcome-section p {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+    animation: fadeInUp 0.8s ease-out 0.2s backwards;
+}
+
+.new-interview-btn {
+    background: linear-gradient(90deg, var(--neon-blue), #00aaff);
+    color: #000;
+    border: none;
+    padding: 16px 40px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 30px rgba(0, 200, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.8s ease-out 0.4s backwards;
+}
+
+.new-interview-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: 0.5s;
+}
+
+.new-interview-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 50px rgba(0, 200, 255, 0.6);
+}
+
+.new-interview-btn:hover::before {
+    left: 100%;
+}
+
+/* HISTORY GRID */
+.history-section h3 {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.history-section h3::before {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 24px;
+    background: var(--neon-purple);
+    border-radius: 2px;
+    box-shadow: 0 0 10px var(--neon-purple);
+}
+
+.interview-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 30px;
+    perspective: 1000px;
+}
+
+.interview-card {
+    background: var(--glass-panel);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.interview-card:hover {
+    transform: translateY(-10px) rotateX(2deg);
+    border-color: rgba(0, 200, 255, 0.5);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.interview-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.interview-card:hover::after {
+    opacity: 1;
+}
+
+.interview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.interview-header h4 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white;
+}
+
+.status-badge {
+    font-size: 0.7rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 1px;
+    border: 1px solid transparent;
+}
+
+.status-badge.completed {
+    background: rgba(0, 255, 128, 0.05);
+    color: #00ff80;
+    border-color: rgba(0, 255, 128, 0.2);
+    box-shadow: 0 0 10px rgba(0, 255, 128, 0.1);
+}
+
+.status-badge.processing {
+    background: rgba(255, 184, 77, 0.05);
+    color: #ffb84d;
+    border-color: rgba(255, 184, 77, 0.2);
+    animation: pulse 2s infinite;
+}
+
+.interview-details p {
+    color: #ccc;
+    margin: 10px 0;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.interview-details p::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 4px;
+    background: var(--text-secondary);
+    border-radius: 50%;
+}
+
+.feedback-summary {
+    margin-top: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 3px solid var(--neon-blue);
+}
+
+.feedback-summary strong {
+    color: var(--neon-blue);
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.feedback-summary p {
+    color: #eee;
+    font-style: italic;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.feedback-summary p::before {
+    display: none;
+}
+
+/* ANIMATIONS */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+        text-shadow: 0 0 10px rgba(255, 184, 77, 0.5);
+    }
+
+    50% {
+        opacity: 0.7;
+        text-shadow: none;
+    }
+
+    100% {
+        opacity: 1;
+        text-shadow: 0 0 10px rgba(255, 184, 77, 0.5);
+    }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .dashboard-main {
+        padding: 40px 20px;
+    }
+
+    .welcome-section h2 {
+        font-size: 2.5rem;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        gap: 15px;
+        height: auto;
+        padding: 20px;
+    }
+}
+
+/* ACTION BUTTONS */
+.card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.view-btn,
+.delete-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.view-btn {
+    background: rgba(0, 200, 255, 0.1);
+    color: var(--neon-blue);
+    border: 1px solid rgba(0, 200, 255, 0.2);
+}
+
+.view-btn:hover {
+    background: rgba(0, 200, 255, 0.2);
+    box-shadow: 0 0 10px rgba(0, 200, 255, 0.1);
+}
+
+.delete-btn {
+    background: rgba(255, 77, 77, 0.1);
+    color: #ff6b6b;
+    border: 1px solid rgba(255, 77, 77, 0.2);
+}
+
+.delete-btn:hover {
+    background: rgba(255, 77, 77, 0.2);
+    box-shadow: 0 0 10px rgba(255, 77, 77, 0.1);
+}

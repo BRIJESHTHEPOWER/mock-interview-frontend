@@ -1,0 +1,96 @@
+/* ============================================
+   FLOATING CHATBOT BUTTON STYLES
+   ============================================ */
+
+/* Floating Button */
+.chatbot-button {
+    position: fixed !important;
+    bottom: 30px !important;
+    right: 30px !important;
+    left: auto !important;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s ease;
+    z-index: 99999 !important;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.chatbot-button:hover {
+    transform: scale(1.1) translateY(0px);
+    box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+    animation: none;
+}
+
+.chatbot-button:active {
+    transform: scale(0.95);
+}
+
+.chatbot-icon {
+    font-size: 30px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.chatbot-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ff4757;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .chatbot-button {
+        bottom: 20px !important;
+        right: 20px !important;
+        width: 60px;
+        height: 60px;
+    }
+
+    .chatbot-icon {
+        font-size: 26px;
+    }
+}
+
+/* Accessibility */
+.chatbot-button:focus {
+    outline: 3px solid rgba(102, 126, 234, 0.5);
+    outline-offset: 2px;
+}
