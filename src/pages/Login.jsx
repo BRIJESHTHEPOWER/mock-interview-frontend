@@ -57,6 +57,13 @@ export default function Login() {
 
     return (
         <div className="login-container">
+            {/* Floating particles */}
+            <div className="particle"></div>
+            <div className="particle"></div>
+            <div className="particle"></div>
+            <div className="particle"></div>
+            <div className="particle"></div>
+
             <div className="login-content">
                 <div className="auth-card">
                     <div className="brand-section">
@@ -66,7 +73,7 @@ export default function Login() {
                     </div>
 
                     <div className="auth-header">
-                        <h2>{isSignup ? 'Create Account' : 'Welcome Back'}</h2>
+                        <h2>{isSignup ? 'Create Account' : 'Welcome'}</h2>
                         <p>{isSignup ? 'Start your journey to success' : 'Enter your details to access your account'}</p>
                     </div>
 
@@ -119,17 +126,6 @@ export default function Login() {
                         Sign in with Google
                     </button>
 
-                    <div className="auth-footer">
-                        <p className="toggle-mode">
-                            {isSignup ? 'Already have an account?' : "Don't have an account?"}
-                            <button
-                                onClick={() => setIsSignup(!isSignup)}
-                                className="toggle-btn"
-                            >
-                                {isSignup ? ' Log In' : ' Sign Up'}
-                            </button>
-                        </p>
-                    </div>
                 </div>
             </div>
         </div>

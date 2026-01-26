@@ -41,13 +41,30 @@ export const AuthProvider = ({ children }) => {
 
     // Listen for auth state changes
     useEffect(() => {
+        let mounted = true;
+
+        // Timeout to prevent infinite loading state
+        const timer = setTimeout(() => {
+            if (mounted && loading) {
+                console.warn("Auth state change timed out, forcing render");
+                setLoading(false);
+            }
+        }, 5000);
+
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setCurrentUser(user);
-            setLoading(false);
+            if (mounted) {
+                setCurrentUser(user);
+                setLoading(false);
+                clearTimeout(timer);
+            }
         });
 
         // Cleanup subscription
-        return unsubscribe;
+        return () => {
+            mounted = false;
+            clearTimeout(timer);
+            unsubscribe();
+        };
     }, []);
 
     function googleSignIn() {

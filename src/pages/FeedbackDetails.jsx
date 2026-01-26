@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
-import './Dashboard.css'; // Reuse dashboard styles for consistency
+import './FeedbackDetails.css'; // Use dedicated styles with light mode support
 
 export default function FeedbackDetails() {
     const { id } = useParams();
@@ -56,33 +56,33 @@ export default function FeedbackDetails() {
     };
 
     return (
-        <div className="dashboard-container" style={{ minHeight: '100vh', padding: '100px 20px' }}>
-            <div className="interview-card" style={{ maxWidth: '900px', margin: '0 auto', cursor: 'default', transform: 'none' }}>
-                <button onClick={() => navigate('/dashboard')} className="back-btn" style={{ marginBottom: '20px', background: 'transparent', border: '1px solid #555', color: '#fff', padding: '5px 15px', borderRadius: '4px', cursor: 'pointer' }}>
+        <div className="feedback-details-container">
+            <div className="feedback-details-card">
+                <button onClick={() => navigate('/dashboard')} className="feedback-back-btn">
                     ← Back to Dashboard
                 </button>
 
-                <h1 style={{ fontSize: '2rem', marginBottom: '10px', color: 'white' }}>{jobRole} Interview Result</h1>
+                <h1 className="feedback-title">{jobRole} Interview Result</h1>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '30px', background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '8px' }}>
-                    <div>
-                        <strong style={{ color: '#aaa', display: 'block', marginBottom: '5px' }}>Date</strong>
-                        <span style={{ color: '#fff' }}>{formatDate(startedAt)}</span>
+                <div className="feedback-meta-grid">
+                    <div className="feedback-meta-item">
+                        <strong>Date</strong>
+                        <span>{formatDate(startedAt)}</span>
                     </div>
-                    <div>
-                        <strong style={{ color: '#aaa', display: 'block', marginBottom: '5px' }}>Duration</strong>
-                        <span style={{ color: '#fff' }}>{formatDuration(duration)}</span>
+                    <div className="feedback-meta-item">
+                        <strong>Duration</strong>
+                        <span>{formatDuration(duration)}</span>
                     </div>
                 </div>
 
                 {feedback ? (
                     <div className="feedback-content">
-                        <h2 style={{ borderBottom: '2px solid #00c8ff', paddingBottom: '10px', marginBottom: '20px', color: '#00c8ff' }}>🧠 AI Interview Feedback</h2>
+                        <h2 className="feedback-section-title">🧠 AI Interview Feedback</h2>
 
                         {/* Display raw feedback text */}
                         {typeof feedback === 'string' ? (
-                            <div style={{ background: 'rgba(0,200,255,0.05)', padding: '25px', borderRadius: '12px', border: '1px solid rgba(0,200,255,0.2)' }}>
-                                <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', color: '#ddd', lineHeight: '1.8', fontSize: '15px', margin: 0 }}>
+                            <div className="feedback-text-box">
+                                <pre>
                                     {feedback}
                                 </pre>
                             </div>
@@ -90,23 +90,23 @@ export default function FeedbackDetails() {
                             /* Display structured feedback if available */
                             <>
                                 {feedback.score && (
-                                    <div style={{ marginBottom: '30px', textAlign: 'center' }}>
-                                        <span style={{ fontSize: '3rem', fontWeight: 'bold', color: '#00c8ff' }}>{feedback.score}/10</span>
-                                        <p style={{ color: '#ccc' }}>AI Performance Score</p>
+                                    <div className="feedback-score">
+                                        <span className="feedback-score-value">{feedback.score}/10</span>
+                                        <p className="feedback-score-label">AI Performance Score</p>
                                     </div>
                                 )}
 
                                 {feedback.summary && (
                                     <>
-                                        <h3 style={{ borderBottom: '1px solid #333', paddingBottom: '10px', marginBottom: '15px', color: '#fff' }}>Executive Summary</h3>
-                                        <p style={{ lineHeight: '1.6', color: '#ddd', marginBottom: '30px' }}>{feedback.summary}</p>
+                                        <h3 className="feedback-subsection-title">Executive Summary</h3>
+                                        <p className="feedback-subsection-text">{feedback.summary}</p>
                                     </>
                                 )}
 
                                 {feedback.strengths && (
                                     <>
                                         <h3 style={{ color: '#00ff80', marginBottom: '10px' }}>✅ Strengths</h3>
-                                        <ul style={{ paddingLeft: '20px', marginBottom: '20px', color: '#ddd' }}>
+                                        <ul className="feedback-list">
                                             {feedback.strengths.map((s, i) => <li key={i}>{s}</li>)}
                                         </ul>
                                     </>
@@ -115,7 +115,7 @@ export default function FeedbackDetails() {
                                 {feedback.weaknesses && (
                                     <>
                                         <h3 style={{ color: '#ff6b6b', marginBottom: '10px' }}>⚠️ Areas for Improvement</h3>
-                                        <ul style={{ paddingLeft: '20px', marginBottom: '20px', color: '#ddd' }}>
+                                        <ul className="feedback-list">
                                             {feedback.weaknesses.map((w, i) => <li key={i}>{w}</li>)}
                                         </ul>
                                     </>
@@ -132,10 +132,10 @@ export default function FeedbackDetails() {
 
                 {/* Transcript Section */}
                 {transcript && transcript !== 'No transcript available' && (
-                    <div style={{ marginTop: '40px' }}>
-                        <h2 style={{ borderBottom: '2px solid #888', paddingBottom: '10px', marginBottom: '20px', color: '#fff' }}>📝 Interview Transcript</h2>
-                        <div style={{ background: 'rgba(0,0,0,0.3)', padding: '20px', borderRadius: '8px', maxHeight: '400px', overflowY: 'auto' }}>
-                            <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', color: '#ccc', lineHeight: '1.6', fontSize: '14px', margin: 0 }}>
+                    <div className="transcript-section">
+                        <h2 className="feedback-section-title">📝 Interview Transcript</h2>
+                        <div className="transcript-box">
+                            <pre>
                                 {transcript}
                             </pre>
                         </div>

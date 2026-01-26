@@ -13,6 +13,11 @@
     /* Ensure it floats centrally */
 }
 
+.avatar-container.small {
+    width: 120px;
+    height: 120px;
+}
+
 /* Central Circle */
 .avatar-circle {
     width: 120px;
@@ -28,9 +33,18 @@
     transition: transform 0.3s ease;
 }
 
+.avatar-container.small .avatar-circle {
+    width: 60px;
+    height: 60px;
+}
+
 .avatar-icon {
     font-size: 50px;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.avatar-container.small .avatar-icon {
+    font-size: 25px;
 }
 
 /* Speaking Animation - Pulsing Waves */

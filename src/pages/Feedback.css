@@ -2,33 +2,31 @@
    FEEDBACK STYLES - AURORA EDITION
    ============================================ */
 
-/* 1. Unique Background Design: AURORA BOREALIS */
+/* 1. Background matching Login page */
 .feedback-container {
     width: 100%;
     min-height: 100vh;
-    /* Ensure full viewport coverage */
-    background: #000;
+    height: 100vh;
+    background: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a14 50%, #050509 100%);
 
-    /* Center content */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 
-    /* Clear navbar */
-    padding-top: 90px;
-    padding-bottom: 40px;
-    /* Add bottom padding to prevent cut-off on small screens */
+    padding: 80px 20px 20px 20px;
     box-sizing: border-box;
 
-    position: relative;
-    overflow: hidden;
-    /* Keep aurora contained */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
 }
 
-/* The Aurora Background */
-.feedback-container::before,
-.feedback-container::after {
+/* Animated gradient overlay matching Login */
+.feedback-container::before {
     content: '';
     position: absolute;
     top: -50%;
@@ -36,66 +34,48 @@
     width: 200%;
     height: 200%;
     background:
-        radial-gradient(circle at 50% 50%, rgba(0, 200, 255, 0.1), transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(189, 0, 255, 0.1), transparent 40%),
-        conic-gradient(from 0deg at 50% 50%, rgba(0, 0, 0, 1) 0deg, rgba(10, 10, 20, 1) 360deg);
-    animation: rotateBackground 60s linear infinite;
-    z-index: 0;
+        radial-gradient(circle at 20% 30%, rgba(0, 200, 255, 0.15) 0%, transparent 25%),
+        radial-gradient(circle at 80% 70%, rgba(189, 0, 255, 0.15) 0%, transparent 25%),
+        radial-gradient(circle at 50% 50%, rgba(0, 200, 255, 0.08) 0%, transparent 35%);
+    animation: gradientShift 15s ease-in-out infinite;
+    pointer-events: none;
 }
 
-.feedback-container::after {
-    background:
-        radial-gradient(ellipse at center, rgba(0, 255, 128, 0.05) 0%, transparent 70%);
-    animation: pulseAurora 10s ease-in-out infinite alternate;
-    mix-blend-mode: screen;
-}
+@keyframes gradientShift {
 
-@keyframes rotateBackground {
-    0% {
-        transform: rotate(0deg);
-    }
-
+    0%,
     100% {
-        transform: rotate(360deg);
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    33% {
+        transform: translate(10%, 10%) rotate(120deg);
+    }
+
+    66% {
+        transform: translate(-10%, 5%) rotate(240deg);
     }
 }
 
-@keyframes pulseAurora {
-    0% {
-        opacity: 0.3;
-        transform: scale(1);
-    }
-
-    100% {
-        opacity: 0.7;
-        transform: scale(1.1);
-    }
-}
-
-/* 2. Feedback Card - Glassmorphism & Alignment */
-/* 2. Feedback Card - Glassmorphism & Alignment */
+/* 2. Feedback Card - Glassmorphism matching Login */
 .feedback-card {
-    background: rgba(20, 20, 30, 0.6);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    padding: 40px 30px;
-    /* Reduced from 60px 40px */
-    border-radius: 30px;
-    box-shadow:
-        0 40px 80px rgba(0, 0, 0, 0.6),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    background: rgba(15, 16, 22, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 30px 30px;
     width: 90%;
-    /* Responsive width */
     max-width: 500px;
-    /* Slightly smaller width */
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+        0 0 40px rgba(0, 200, 255, 0.1);
     text-align: center;
     position: relative;
     z-index: 10;
     margin: 20px 0;
-    /* Reduced margin */
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
 
-    /* Ensure content inside is centered */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -266,11 +246,10 @@ form {
 }
 
 /* =================================
-   LIGHT MODE SUPPORT
+   LIGHT MODE SUPPORT - matching Login
    ================================= */
 [data-theme='light'] .feedback-container {
-    background: #f8fafc;
-    /* Light background */
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f8fafc 100%);
 }
 
 /* Hide Aurora in light mode for clean white look */
@@ -281,14 +260,17 @@ form {
 }
 
 [data-theme='light'] .feedback-card {
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.95);
     border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(0, 0, 0, 0.05) inset;
 }
 
 [data-theme='light'] .gradient-text {
-    background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #475569 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -297,14 +279,15 @@ form {
 }
 
 [data-theme='light'] .feedback-input {
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    color: #1e293b;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    color: #0f172a;
 }
 
 [data-theme='light'] .feedback-input:focus {
+    background: #ffffff;
     border-color: #0284c7;
-    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
 }
 
 [data-theme='light'] .star.off .star-icon {

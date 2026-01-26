@@ -7,6 +7,9 @@
     background-color: var(--bg-primary);
     color: var(--text-primary);
     transition: background-color 0.3s ease, color 0.3s ease;
+    padding-bottom: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 /* HERO SECTION */
@@ -93,14 +96,74 @@
     }
 }
 
-/* SCROLL INDICATOR */
-.scroll-indicator {
+/* SIDE NAVIGATION DOTS */
+.side-navigation {
+    position: fixed;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    z-index: 1000;
+}
+
+.nav-dot {
+    width: 12px;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.nav-dot:hover {
+    background: rgba(0, 200, 255, 0.5);
+    transform: scale(1.3);
+}
+
+.nav-dot.active {
+    background: var(--neon-blue);
+    box-shadow: 0 0 15px var(--neon-blue);
+    transform: scale(1.5);
+    border-color: transparent;
+}
+
+/* Tooltip on hover */
+.nav-dot::before {
+    content: attr(title);
     position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%) translateX(10px);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-dot:hover::before {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
+/* SCROLL INDICATOR (Restored) */
+.scroll-indicator {
+    position: fixed;
     bottom: 40px;
     left: 50%;
     transform: translateX(-50%);
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border: 2px solid rgba(255, 255, 255, 0.4);
@@ -110,9 +173,21 @@
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease, opacity 0.5s ease;
-    z-index: 10;
+    z-index: 1000;
     animation: float-flow 3s ease-in-out infinite, pulse-ring 2s ease-out infinite;
     opacity: 1;
+}
+
+.scroll-indicator:hover {
+    background: rgba(0, 200, 255, 0.25);
+    border-color: var(--neon-blue);
+    transform: translateX(-50%) scale(1.15);
+    box-shadow: 0 0 30px rgba(0, 200, 255, 0.6);
+    animation: float-flow 3s ease-in-out infinite, pulse-ring 2s ease-out infinite;
+}
+
+.scroll-indicator:hover svg {
+    animation: arrow-flow-fast 0.8s ease-in-out infinite;
 }
 
 .scroll-indicator::before {
@@ -386,6 +461,103 @@
     color: #000000 !important;
 }
 
+/* FUTURE PLANS SECTION */
+.future-plans-section {
+    padding: 100px 20px;
+    background: var(--bg-primary);
+    position: relative;
+    z-index: 2;
+}
+
+.future-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.future-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 40px 30px;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.future-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.future-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--neon-blue);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 200, 255, 0.2);
+}
+
+.future-card:hover::before {
+    opacity: 1;
+}
+
+.future-icon {
+    font-size: 3.5rem;
+    margin-bottom: 25px;
+    filter: drop-shadow(0 0 15px rgba(0, 200, 255, 0.4));
+    transition: transform 0.4s ease;
+}
+
+.future-card:hover .future-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.future-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.future-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+/* Light Theme Adjustments for Future Plans */
+[data-theme='light'] .future-card {
+    background: rgba(255, 255, 255, 0.7);
+    /* More opaque for light mode visibility */
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='light'] .future-card:hover {
+    box-shadow: 0 15px 40px rgba(0, 200, 255, 0.2);
+    border-color: var(--neon-blue);
+}
+
+[data-theme='light'] .future-card h3 {
+    color: #000;
+}
+
+[data-theme='light'] .future-card p {
+    color: #444;
+}
+
+
 /* TESTIMONIALS SECTION */
 .testimonials-section {
     padding: 100px 20px;
@@ -399,12 +571,44 @@
     color: var(--text-primary);
 }
 
-.testimonials-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
+/* Carousel Styles */
+.testimonials-carousel-container {
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+    padding: 20px 0 40px;
+    /* Add padding for shadows/hover effects */
+    --items-per-page: 3;
+}
+
+.testimonials-track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    width: 100%;
+    transform: translateX(calc(-1 * var(--current-index) * 100% / var(--items-per-page)));
+}
+
+.testimonial-slide {
+    flex: 0 0 calc(100% / var(--items-per-page));
+    max-width: calc(100% / var(--items-per-page));
+    padding: 0 15px;
+    /* Spacing between cards */
+    box-sizing: border-box;
+}
+
+/* Responsive configurations */
+@media (max-width: 1024px) {
+    .testimonials-carousel-container {
+        --items-per-page: 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .testimonials-carousel-container {
+        --items-per-page: 1;
+    }
 }
 
 .testimonial-card {
@@ -414,10 +618,20 @@
     border-radius: 16px;
     transition: transform 0.3s, box-shadow 0.3s;
     box-shadow: var(--card-shadow);
+    height: 100%;
+    /* Ensure card takes full height of the slide */
+    display: flex;
+    flex-direction: column;
+}
+
+.t-text {
+    flex-grow: 1;
+    /* Make text area fill available space */
 }
 
 .testimonial-card:hover {
-    transform: translateY(-10px);
+    transform: translateY(-5px);
+    /* Reduced movement to avoid layout shift issues */
     border-color: var(--neon-blue);
     box-shadow: 0 10px 30px rgba(0, 200, 255, 0.15);
 }
@@ -547,8 +761,10 @@
 /* FOOTER */
 .footer {
     background: var(--bg-primary);
-    padding: 80px 20px 30px;
+    padding: 80px 20px 40px;
     border-top: 1px solid var(--glass-border);
+    position: relative;
+    z-index: 2;
 }
 
 .footer-content {

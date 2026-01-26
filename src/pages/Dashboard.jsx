@@ -2,7 +2,7 @@
 // DASHBOARD PAGE (FIXED)
 // ============================================
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
@@ -11,7 +11,9 @@ import {
     where,
     onSnapshot,
     deleteDoc,
-    doc
+    doc,
+    orderBy,
+    limit
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import './Dashboard.css';
@@ -25,33 +27,30 @@ export default function Dashboard() {
     const navigate = useNavigate();
 
     // ===============================
-    // FETCH INTERVIEWS (REAL-TIME)
+    // FETCH INTERVIEWS (REAL-TIME) - OPTIMIZED
     // ===============================
     useEffect(() => {
         if (!currentUser?.uid) return;
 
         setLoading(true);
 
+        // Optimized query: limit to 20 most recent interviews, ordered by server
         const q = query(
             collection(db, 'interviews'),
-            where('userId', '==', currentUser.uid)
+            where('userId', '==', currentUser.uid),
+            orderBy('startedAt', 'desc'),
+            limit(20)
         );
 
         const unsubscribe = onSnapshot(
             q,
             (snapshot) => {
-                let interviewData = snapshot.docs.map(doc => ({
+                const interviewData = snapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 }));
 
-                // Sort latest first
-                interviewData.sort((a, b) => {
-                    const dateA = a.startedAt?.toDate ? a.startedAt.toDate() : new Date(a.startedAt || 0);
-                    const dateB = b.startedAt?.toDate ? b.startedAt.toDate() : new Date(b.startedAt || 0);
-                    return dateB - dateA;
-                });
-
+                // Data already sorted by Firestore
                 setInterviews(interviewData);
                 setLoading(false);
                 setError(null);
@@ -78,21 +77,19 @@ export default function Dashboard() {
         }
     };
 
-    // ===============================
-    // HELPERS
-    // ===============================
-    const formatDate = (timestamp) => {
+    // Memoize formatters to avoid recreating on every render
+    const formatDate = useMemo(() => (timestamp) => {
         if (!timestamp) return 'N/A';
         const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
         return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-    };
+    }, []);
 
-    const formatDuration = (seconds) => {
-        if (!seconds) return 'N/A';
+    const formatDuration = useMemo(() => (seconds) => {
+        if (seconds === undefined || seconds === null) return 'N/A';
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
         return `${mins}m ${secs}s`;
-    };
+    }, []);
 
     // ===============================
     // UI
@@ -124,7 +121,11 @@ export default function Dashboard() {
                     )}
 
                     {loading ? (
-                        <p className="loading">Loading your interviews...</p>
+                        <div className="loading-skeleton">
+                            <div className="skeleton-card"></div>
+                            <div className="skeleton-card"></div>
+                            <div className="skeleton-card"></div>
+                        </div>
                     ) : interviews.length === 0 ? (
                         <div className="empty-state">
                             <p>No interviews yet. Start your first one!</p>
@@ -144,7 +145,7 @@ export default function Dashboard() {
                                     <div className="interview-details">
                                         <p>📅 {formatDate(interview.startedAt)}</p>
 
-                                        {interview.duration && (
+                                        {interview.duration !== undefined && (
                                             <p>⏱️ Duration: {formatDuration(interview.duration)}</p>
                                         )}
 

@@ -123,15 +123,39 @@ export const useRetell = () => {
     /**
      * Toggle microphone mute
      */
+    // Track mute state locally since SDK might not expose it synchronously
+    const isMutedRef = useRef(false);
+
+    /**
+     * Toggle microphone mute
+     */
     const toggleMute = () => {
         if (retellClient.current) {
-            const isMuted = retellClient.current.isMuted();
-            if (isMuted) {
-                retellClient.current.unmute();
+            isMutedRef.current = !isMutedRef.current;
+
+            if (isMutedRef.current) {
+                // Mute logic - try/catch SDK specific methods
+                try {
+                    // Check if SDK has dedicated mute method, or fallback to track manipulation if exposed
+                    // Assuming basic SDK mute for now
+                    if (typeof retellClient.current.mute === 'function') {
+                        retellClient.current.mute();
+                    }
+                    console.log('🔇 Mic muted');
+                } catch (e) {
+                    console.warn('SDK mute failed', e);
+                }
             } else {
-                retellClient.current.mute();
+                try {
+                    if (typeof retellClient.current.unmute === 'function') {
+                        retellClient.current.unmute();
+                    }
+                    console.log('🎤 Mic unmuted');
+                } catch (e) {
+                    console.warn('SDK unmute failed', e);
+                }
             }
-            return !isMuted;
+            return isMutedRef.current;
         }
         return false;
     };

@@ -1,14 +1,11 @@
-// ============================================
-// AI AVATAR COMPONENT
-// ============================================
-// Displays a professional pulsing avatar that reacts to speech
 
 import React from 'react';
 import './AIAvatar.css';
 
-export default function AIAvatar({ isSpeaking }) {
+export default function AIAvatar({ isSpeaking, size = 'normal' }) {
     return (
-        <div className={`avatar-container ${isSpeaking ? 'is-speaking' : ''}`}>
+        <div className={`avatar-container ${size} ${isSpeaking ? 'is-speaking' : ''}`}>
+            {/* Pulsing waves */}
             <div className="speaking-wave"></div>
             <div className="speaking-wave"></div>
             <div className="speaking-wave"></div>

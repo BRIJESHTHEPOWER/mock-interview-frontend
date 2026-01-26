@@ -19,7 +19,7 @@
     justify-content: center;
     box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
     transition: all 0.3s ease;
-    z-index: 99999 !important;
+    z-index: 2147483647 !important;
     animation: float 3s ease-in-out infinite;
 }
 

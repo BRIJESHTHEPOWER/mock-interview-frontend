@@ -48,6 +48,8 @@ export default function Navbar() {
                             Home
                         </Link>
 
+
+
                         <Link to="/feedback" className={`nav-link ${location.pathname === '/feedback' ? 'active' : ''}`}>
                             Feedback
                         </Link>
@@ -105,9 +107,21 @@ export default function Navbar() {
                             </button>
                         </>
                     ) : (
-                        <Link to="/login" className="signup-btn">
-                            Login
-                        </Link>
+                        <>
+                            <button
+                                onClick={() => navigate('/login')}
+                                className="dashboard-btn"
+                                style={{ marginRight: '10px' }}
+                            >
+                                Dashboard
+                            </button>
+
+                            {location.pathname !== '/login' && (
+                                <Link to="/login" className="signup-btn">
+                                    Login
+                                </Link>
+                            )}
+                        </>
                     )}
                 </div>
             </div>

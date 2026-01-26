@@ -3,7 +3,7 @@
 // ============================================
 // Page where user selects job role before starting interview
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import './InterviewSetup.css';
@@ -13,6 +13,7 @@ export default function InterviewSetup() {
     const [customRole, setCustomRole] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const startButtonRef = useRef(null); // Ref for start button
 
     const { currentUser } = useAuth();
     const navigate = useNavigate();
@@ -30,6 +31,20 @@ export default function InterviewSetup() {
         'Business Analyst',
         'Marketing Manager'
     ];
+
+    // Handle role selection with auto-scroll
+    const handleRoleSelect = (role) => {
+        setJobRole(role);
+        setError('');
+
+        // Scroll to start button smoothly
+        setTimeout(() => {
+            startButtonRef.current?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }, 100);
+    };
 
     // Handle starting interview
     const handleStartInterview = () => {
@@ -68,10 +83,7 @@ export default function InterviewSetup() {
                             <button
                                 key={role}
                                 className={`role-btn ${jobRole === role ? 'selected' : ''}`}
-                                onClick={() => {
-                                    setJobRole(role);
-                                    setError('');
-                                }}
+                                onClick={() => handleRoleSelect(role)}
                             >
                                 {role}
                             </button>
@@ -86,8 +98,7 @@ export default function InterviewSetup() {
                             value={customRole}
                             onChange={(e) => {
                                 setCustomRole(e.target.value);
-                                setJobRole('custom');
-                                setError('');
+                                handleRoleSelect('custom'); // Mark as custom role selected
                             }}
                             className="custom-role-input"
                         />
@@ -100,17 +111,20 @@ export default function InterviewSetup() {
                         <li>✅ AI-powered voice interviewer</li>
                         <li>✅ Role-specific questions</li>
                         <li>✅ Real-time conversation</li>
-                        <li>✅ Interview history saved automatically</li>
+                        <li>✅ Detailed feedback report</li>
+                        <li>✅ 2 free interviews per day</li>
                     </ul>
                 </div>
 
-                <button
-                    onClick={handleStartInterview}
-                    className="start-btn"
-                    disabled={loading || (!jobRole && !customRole)}
-                >
-                    {loading ? 'Preparing...' : '🎤 Start Interview'}
-                </button>
+                <div className="action-buttons" ref={startButtonRef}>
+                    <button
+                        className="start-btn pulse-animation"
+                        onClick={handleStartInterview}
+                        disabled={loading || (!jobRole && !customRole)}
+                    >
+                        {loading ? 'Starting...' : '🎤 Start Interview'}
+                    </button>
+                </div>
             </div>
         </div>
     );

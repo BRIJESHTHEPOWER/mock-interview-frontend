@@ -10,8 +10,8 @@ export default function FloatingChatbot() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Don't show on chatbot page itself or interview page
-    if (location.pathname === '/chatbot' || location.pathname === '/interview') {
+    // Only show on Landing Page
+    if (location.pathname !== '/') {
         return null;
     }
 

@@ -410,3 +410,147 @@
     background: rgba(255, 77, 77, 0.2);
     box-shadow: 0 0 10px rgba(255, 77, 77, 0.1);
 }
+
+/* ============================================
+   LIGHT MODE STYLES
+   ============================================ */
+[data-theme='light'] .dashboard-container {
+    background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 50%, #f8fafc 100%);
+    color: #0f172a;
+}
+
+[data-theme='light'] .welcome-section h2 {
+    background: linear-gradient(135deg, #0f172a 0%, #475569 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+[data-theme='light'] .welcome-section p {
+    color: #475569;
+}
+
+[data-theme='light'] .new-interview-btn {
+    background: linear-gradient(90deg, #0284c7, #0369a1);
+    color: #ffffff;
+    box-shadow: 0 0 30px rgba(2, 132, 199, 0.3);
+}
+
+[data-theme='light'] .new-interview-btn:hover {
+    box-shadow: 0 0 50px rgba(2, 132, 199, 0.5);
+}
+
+[data-theme='light'] .history-section h3 {
+    color: #0f172a;
+}
+
+[data-theme='light'] .history-section h3::before {
+    background: #7c3aed;
+    box-shadow: 0 0 10px #7c3aed;
+}
+
+[data-theme='light'] .interview-card {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light'] .interview-card:hover {
+    border-color: rgba(2, 132, 199, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme='light'] .interview-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light'] .interview-header h4 {
+    color: #0f172a;
+}
+
+[data-theme='light'] .interview-details p {
+    color: #475569;
+}
+
+[data-theme='light'] .interview-details p::before {
+    background: #94a3b8;
+}
+
+[data-theme='light'] .feedback-summary {
+    background: #f1f5f9;
+    border-left: 3px solid #0284c7;
+}
+
+[data-theme='light'] .feedback-summary strong {
+    color: #0284c7;
+}
+
+[data-theme='light'] .feedback-summary p {
+    color: #1e293b;
+}
+
+[data-theme='light'] .card-actions {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light'] .view-btn {
+    background: rgba(2, 132, 199, 0.1);
+    color: #0284c7;
+    border: 1px solid rgba(2, 132, 199, 0.3);
+}
+
+[data-theme='light'] .view-btn:hover {
+    background: rgba(2, 132, 199, 0.2);
+    box-shadow: 0 0 10px rgba(2, 132, 199, 0.2);
+}
+
+[data-theme='light'] .delete-btn {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+[data-theme='light'] .delete-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+}
+
+/* ============================================
+   LOADING SKELETON
+   ============================================ */
+.loading-skeleton {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 30px;
+}
+
+.skeleton-card {
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0.05) 25%,
+            rgba(255, 255, 255, 0.1) 50%,
+            rgba(255, 255, 255, 0.05) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 16px;
+    height: 250px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme='light'] .skeleton-card {
+    background: linear-gradient(90deg,
+            #f1f5f9 25%,
+            #e2e8f0 50%,
+            #f1f5f9 75%);
+    background-size: 200% 100%;
+    border: 1px solid #e2e8f0;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}

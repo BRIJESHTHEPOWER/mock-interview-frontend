@@ -1,0 +1,214 @@
+/* ============================================
+   FEEDBACK DETAILS PAGE STYLES
+   ============================================ */
+
+.feedback-details-container {
+    min-height: 100vh;
+    padding: 100px 20px;
+    background: var(--bg-primary);
+}
+
+.feedback-details-card {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--glass-panel);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: var(--card-shadow);
+}
+
+.feedback-back-btn {
+    margin-bottom: 20px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.feedback-back-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--neon-blue);
+}
+
+.feedback-title {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+.feedback-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.feedback-meta-item strong {
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: 5px;
+}
+
+.feedback-meta-item span {
+    color: var(--text-primary);
+}
+
+.feedback-section-title {
+    border-bottom: 2px solid var(--neon-blue);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    color: var(--neon-blue);
+}
+
+.feedback-text-box {
+    background: rgba(0, 200, 255, 0.05);
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 200, 255, 0.2);
+}
+
+.feedback-text-box pre {
+    white-space: pre-wrap;
+    font-family: inherit;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    font-size: 15px;
+    margin: 0;
+}
+
+.feedback-score {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.feedback-score-value {
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--neon-blue);
+}
+
+.feedback-score-label {
+    color: var(--text-secondary);
+}
+
+.feedback-subsection-title {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    color: var(--text-primary);
+}
+
+.feedback-subsection-text {
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+}
+
+.feedback-list {
+    padding-left: 20px;
+    margin-bottom: 20px;
+    color: var(--text-secondary);
+}
+
+.feedback-list li {
+    margin-bottom: 8px;
+}
+
+.transcript-section {
+    margin-top: 40px;
+}
+
+.transcript-box {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    border-radius: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.transcript-box pre {
+    white-space: pre-wrap;
+    font-family: inherit;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* ============================================
+   LIGHT MODE STYLES
+   ============================================ */
+[data-theme='light'] .feedback-details-container {
+    background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 50%, #f8fafc 100%);
+}
+
+[data-theme='light'] .feedback-details-card {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='light'] .feedback-back-btn {
+    border: 1px solid #cbd5e1;
+    color: #0f172a;
+}
+
+[data-theme='light'] .feedback-back-btn:hover {
+    background: #f1f5f9;
+    border-color: #0284c7;
+}
+
+[data-theme='light'] .feedback-title {
+    color: #0f172a;
+}
+
+[data-theme='light'] .feedback-meta-grid {
+    background: #f8fafc;
+}
+
+[data-theme='light'] .feedback-meta-item strong {
+    color: #64748b;
+}
+
+[data-theme='light'] .feedback-meta-item span {
+    color: #0f172a;
+}
+
+[data-theme='light'] .feedback-text-box {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+}
+
+[data-theme='light'] .feedback-text-box pre {
+    color: #1e293b;
+}
+
+[data-theme='light'] .feedback-subsection-title {
+    border-bottom: 1px solid #e2e8f0;
+    color: #0f172a;
+}
+
+[data-theme='light'] .feedback-subsection-text {
+    color: #475569;
+}
+
+[data-theme='light'] .feedback-list {
+    color: #475569;
+}
+
+[data-theme='light'] .transcript-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+[data-theme='light'] .transcript-box pre {
+    color: #334155;
+}

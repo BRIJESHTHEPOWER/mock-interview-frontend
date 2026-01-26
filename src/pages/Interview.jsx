@@ -36,6 +36,8 @@ export default function Interview() {
     const [isCameraOn, setIsCameraOn] = useState(true); // Default to camera ON
     const [localStream, setLocalStream] = useState(null);
 
+    const [isUserMainView, setIsUserMainView] = useState(false);
+
     const videoRef = useRef(null);
 
     const timerRef = useRef(null);
@@ -69,7 +71,7 @@ export default function Interview() {
         if (isCameraOn && localStream && videoRef.current) {
             videoRef.current.srcObject = localStream;
         }
-    }, [isCameraOn, localStream]);
+    }, [isCameraOn, localStream, isUserMainView]); // Re-run when view toggles
 
     // Start timer when call becomes active
     useEffect(() => {
@@ -141,6 +143,13 @@ export default function Interview() {
         try {
             stopCall(); // Stop the call immediately
 
+            // Turn off camera light immediately
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                setLocalStream(null);
+                setIsCameraOn(false);
+            }
+
             console.log('📞 Interview ended, saving basic data...');
             console.log('Interview ID:', interviewId);
             console.log('Call ID:', sessionData?.callId);
@@ -183,22 +192,39 @@ export default function Interview() {
             console.log('✅ Live session removed from RTDB');
 
             // Navigate to dashboard - feedback will appear when webhook completes
-            console.log('🔄 Navigating to dashboard...');
-            navigate('/dashboard');
+            console.log('🔄 Navigating to dashboard in 4 seconds...');
+
+            // Wait for 4 seconds before redirecting
+            setTimeout(() => {
+                navigate('/dashboard');
+            }, 4000);
 
         } catch (err) {
             console.error('❌ Error saving interview data:', err);
-            navigate('/dashboard');
+            // Even on error, wait a bit
+            setTimeout(() => {
+                navigate('/dashboard');
+            }, 4000);
         }
     };
 
-    const handleEndInterview = () => {
-        stopCall();
+    const handleEndInterview = async () => {
+        console.log("🛑 End Interview Clicked");
+        // Also cleanup here just in case
+        if (localStream) {
+            localStream.getTracks().forEach(track => track.stop());
+            setLocalStream(null);
+            setIsCameraOn(false);
+        }
+
+        // Call the async save function
+        await handleInterviewEnd();
     };
 
     const handleToggleMute = () => {
         const newMuteState = toggleMute();
         setIsMuted(newMuteState);
+        console.log("Mute toggled to:", newMuteState);
     };
 
     const enableCamera = async () => {
@@ -287,7 +313,7 @@ export default function Interview() {
         switch (callStatus) {
             case 'connecting': return 'Connecting...';
             case 'active': return 'AI Interviewer';
-            case 'ended': return 'Call Ended';
+            case 'ended': return 'Call Ended. Redirecting to Dashboard...';
             default: return 'Initializing...';
         }
     };
@@ -335,7 +361,8 @@ export default function Interview() {
             justifyContent: 'center',
             alignItems: 'center',
             position: 'relative',
-            background: '#ffffff'
+            background: '#ffffff',
+            overflow: 'hidden' // Ensure content doesn't push controls out
         },
         controls: {
             height: '80px',
@@ -344,7 +371,9 @@ export default function Interview() {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '20px',
-            borderTop: '1px solid #e0e0e0'
+            borderTop: '1px solid #e0e0e0',
+            flexShrink: 0, // Prevent shrinking
+            zIndex: 20
         },
         button: {
             width: '60px',
@@ -360,10 +389,42 @@ export default function Interview() {
         }
     };
 
+    const toggleView = () => {
+        setIsUserMainView(prev => !prev);
+    };
+
+    // RENDER HELPERS
+    const renderUserVideo = (isMain) => (
+        <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: isMain ? '#202124' : '#202124' }}>
+            {isCameraOn ? (
+                <video
+                    ref={isUserMainView === isMain ? videoRef : null} // Only attach ref if this is the active view for camera
+                    autoPlay
+                    muted
+                    playsInline
+                    style={{ width: '100%', height: '100%', objectFit: isMain ? 'contain' : 'cover', transform: 'scaleX(-1)' }}
+                />
+            ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: isMain ? '20px' : '8px', color: 'white' }}>
+                    <span style={{ fontSize: isMain ? '60px' : '24px' }}>👤</span>
+                    <span style={{ fontSize: isMain ? '24px' : '14px' }}>{isMain ? 'Camera Off' : 'You'}</span>
+                </div>
+            )}
+        </div>
+    );
+
+    const renderAIAvatar = (isMain) => (
+        <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#ffffff' }}>
+            <AIAvatar isSpeaking={isAgentSpeaking} size={isMain ? 'normal' : 'small'} />
+            {isMain && <p style={{ color: '#5f6368', marginTop: '20px', fontSize: '18px' }}>{getStatusText()}</p>}
+        </div>
+    );
+
     return (
         <div style={styles.container}>
             <div style={styles.window}>
-                {/* DEBUG OVERLAY FOR DATABASE */}
+                {/* ... (Keep Debug Overlay) */}
+                {/* ... (Keep Header) */}
                 {(firebaseStatus.firestore !== 'ok' || firebaseStatus.rtdb !== 'ok' || firebaseStatus.config !== 'ok') && (
                     <div style={{
                         position: 'absolute', top: 50, left: 10, zIndex: 100,
@@ -382,7 +443,6 @@ export default function Interview() {
                     </div>
                 )}
 
-                {/* Header */}
                 <div style={styles.header}>
                     <div className="meet-badges" style={{ display: 'flex', gap: '10px' }}>
                         <span style={{ backgroundColor: '#ea4335', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold' }}>REC</span>
@@ -405,38 +465,28 @@ export default function Interview() {
                         </div>
                     )}
 
+                    {/* MAIN VIEW */}
+                    {isUserMainView ? renderUserVideo(true) : renderAIAvatar(true)}
 
+                    {/* PiP VIEW (Clickable to maximize) */}
+                    <div
+                        onClick={toggleView}
+                        style={{
+                            position: 'absolute', bottom: '20px', right: '20px',
+                            width: '240px', height: '160px', backgroundColor: '#f1f3f4',
+                            borderRadius: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
+                            color: '#5f6368', fontSize: '14px', border: '1px solid #e0e0e0',
+                            overflow: 'hidden', boxShadow: '0 4px 10px rgba(0,0,0,0.2)', zIndex: 20,
+                            cursor: 'pointer', transition: 'transform 0.2s'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                        title="Click to swap view"
+                    >
+                        {isUserMainView ? renderAIAvatar(false) : renderUserVideo(false)}
 
-                    {/* Content */}
-                    <div className="avatar-wrapper" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <AIAvatar isSpeaking={isAgentSpeaking} />
-                        <p style={{ color: '#5f6368', marginTop: '20px', fontSize: '18px' }}>{getStatusText()}</p>
-                    </div>
-
-
-
-                    {/* Self View */}
-                    <div style={{
-                        position: 'absolute', bottom: '20px', right: '20px',
-                        width: '240px', height: '160px', backgroundColor: '#f1f3f4',
-                        borderRadius: '12px', display: 'flex', justifyContent: 'center', alignItems: 'center',
-                        color: '#5f6368', fontSize: '14px', border: '1px solid #e0e0e0',
-                        overflow: 'hidden', boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
-                    }}>
-                        {isCameraOn ? (
-                            <video
-                                ref={videoRef}
-                                autoPlay
-                                muted
-                                playsInline
-                                style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scaleX(-1)' }}
-                            />
-                        ) : (
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                                <span style={{ fontSize: '24px' }}>👤</span>
-                                <span>You</span>
-                            </div>
-                        )}
+                        {/* Status text only for AI in PiP */}
+                        {isUserMainView && <p style={{ color: '#5f6368', marginTop: '5px', fontSize: '12px', fontWeight: 'bold' }}>{getStatusText()}</p>}
                     </div>
                 </div>
 
