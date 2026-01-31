@@ -49,10 +49,12 @@ export default function FeedbackDetails() {
     };
 
     const formatDuration = (seconds) => {
-        if (!seconds) return 'N/A';
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins}m ${secs}s`;
+        if (seconds === undefined || seconds === null) return 'N/A';
+        const s = parseInt(seconds) || 0;
+        if (s <= 0) return '0s';
+        const mins = Math.floor(s / 60);
+        const secs = s % 60;
+        return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
     };
 
     return (

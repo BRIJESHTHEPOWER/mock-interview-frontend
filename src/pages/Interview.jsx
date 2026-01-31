@@ -41,6 +41,7 @@ export default function Interview() {
     const videoRef = useRef(null);
 
     const timerRef = useRef(null);
+    const durationRef = useRef(0); // Ref to track duration without stale closures
     const initializationRef = useRef(false);
     const { startCall, stopCall, toggleMute, callStatus, isAgentSpeaking, error: retellError } = useRetell();
 
@@ -78,6 +79,7 @@ export default function Interview() {
         if (callStatus === 'active') {
             timerRef.current = setInterval(() => {
                 setTimer(prev => prev + 1);
+                durationRef.current += 1; // Update ref for reliable access
             }, 1000);
         } else {
             if (timerRef.current) {
@@ -150,17 +152,19 @@ export default function Interview() {
                 setIsCameraOn(false);
             }
 
+            const finalDuration = durationRef.current; // Use Ref value for accuracy
+
             console.log('📞 Interview ended, saving basic data...');
             console.log('Interview ID:', interviewId);
             console.log('Call ID:', sessionData?.callId);
             console.log('Job Role:', jobRole);
-            console.log('Duration:', timer);
+            console.log('Duration:', finalDuration);
 
             // Simply update Firestore with end time and duration
             if (interviewId) {
                 await updateDoc(doc(db, 'interviews', interviewId), {
                     endedAt: new Date(),
-                    duration: timer,
+                    duration: finalDuration,
                     status: 'processing',
                 });
                 console.log('✅ Interview data saved to Firestore');
@@ -192,19 +196,19 @@ export default function Interview() {
             console.log('✅ Live session removed from RTDB');
 
             // Navigate to dashboard - feedback will appear when webhook completes
-            console.log('🔄 Navigating to dashboard in 4 seconds...');
+            console.log('🔄 Navigating to dashboard...');
 
-            // Wait for 4 seconds before redirecting
+            // Minimal delay to ensure state updates and RTDB removal are processed
             setTimeout(() => {
                 navigate('/dashboard');
-            }, 4000);
+            }, 500);
 
         } catch (err) {
             console.error('❌ Error saving interview data:', err);
-            // Even on error, wait a bit
+            // Even on error, navigate away
             setTimeout(() => {
                 navigate('/dashboard');
-            }, 4000);
+            }, 500);
         }
     };
 

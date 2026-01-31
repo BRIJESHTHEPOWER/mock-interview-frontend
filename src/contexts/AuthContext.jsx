@@ -4,7 +4,7 @@
 // Provides authentication state throughout the app
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
 // Create authentication context
@@ -72,12 +72,18 @@ export const AuthProvider = ({ children }) => {
         return signInWithPopup(auth, provider);
     }
 
+    // Reset password
+    const resetPassword = (email) => {
+        return sendPasswordResetEmail(auth, email);
+    };
+
     const value = {
         currentUser,
         signup,
         login,
         googleSignIn,
         logout,
+        resetPassword,
         loading
     };
 

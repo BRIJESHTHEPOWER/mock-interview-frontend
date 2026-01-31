@@ -33,7 +33,7 @@ export default function ChatbotPage() {
     const callOpenRouterAPI = async (userMessage, history) => {
         try {
             // Use environment variable for API URL (works for both local and production)
-            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:10000';
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
             const response = await fetch(`${API_URL}/api/chatbot/message`, {
                 method: 'POST',
