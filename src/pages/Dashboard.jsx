@@ -5,6 +5,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import InfinityLoader from '../components/InfinityLoader';
 import {
     collection,
     query,
@@ -121,10 +122,8 @@ export default function Dashboard() {
                     )}
 
                     {loading ? (
-                        <div className="loading-skeleton">
-                            <div className="skeleton-card"></div>
-                            <div className="skeleton-card"></div>
-                            <div className="skeleton-card"></div>
+                        <div style={{ padding: '40px 0' }}>
+                            <InfinityLoader message="Fetching your interview history..." />
                         </div>
                     ) : interviews.length === 0 ? (
                         <div className="empty-state">

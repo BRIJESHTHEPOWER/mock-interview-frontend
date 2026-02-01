@@ -4,6 +4,7 @@
 // Provides authentication state throughout the app
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import InfinityLoader from '../components/InfinityLoader';
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
@@ -89,7 +90,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={value}>
-            {!loading && children}
+            {loading ? <InfinityLoader fullScreen={true} /> : children}
         </AuthContext.Provider>
     );
 };

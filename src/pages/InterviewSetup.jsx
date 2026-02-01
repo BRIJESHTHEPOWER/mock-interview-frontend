@@ -6,6 +6,7 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import InfinityLoader from '../components/InfinityLoader';
 import './InterviewSetup.css';
 
 export default function InterviewSetup() {
@@ -126,6 +127,7 @@ export default function InterviewSetup() {
                     </button>
                 </div>
             </div>
+            {loading && <InfinityLoader fullScreen={true} message="Initializing interview environment..." />}
         </div>
     );
 }

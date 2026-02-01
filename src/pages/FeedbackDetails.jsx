@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import InfinityLoader from '../components/InfinityLoader';
 import './FeedbackDetails.css'; // Use dedicated styles with light mode support
 
 export default function FeedbackDetails() {
@@ -37,7 +38,11 @@ export default function FeedbackDetails() {
         if (id) fetchInterview();
     }, [id, navigate]);
 
-    if (loading) return <div className="dashboard-container"><p style={{ textAlign: 'center', marginTop: '100px' }}>Loading details...</p></div>;
+    if (loading) return (
+        <div className="dashboard-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <InfinityLoader message="Retrieving feedback details..." />
+        </div>
+    );
     if (!interview) return null;
 
     const { jobRole, startedAt, duration, feedback, transcript } = interview;

@@ -1,0 +1,131 @@
+/* ============================================
+   INFINITY SVG ANIMATION (Reusable Loader)
+   ============================================ */
+
+/* Container for flexibility (inline vs overlay) */
+.infinity-loader-container.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    /* Dimmed transparent background so page background remains visible */
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: overlayFadeIn 0.3s ease-out;
+}
+
+[data-theme='light'] .infinity-loader-container.fullscreen {
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.infinity-loader-container.inline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+@keyframes overlayFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.infinity-loader {
+    width: 120px;
+    height: 60px;
+    margin: 0 auto;
+    fill: none;
+    overflow: visible;
+}
+
+/* Background track of the infinity symbol */
+.infinity-bg {
+    stroke: rgba(0, 200, 255, 0.1);
+    stroke-width: 8;
+    stroke-linecap: round;
+}
+
+[data-theme='light'] .infinity-bg {
+    stroke: rgba(2, 132, 199, 0.1);
+}
+
+/* Moving segment 1 (The "Blue Energy") */
+.infinity-path {
+    stroke: var(--neon-blue);
+    stroke-width: 6;
+    /* Slightly thinner to allow overlap */
+    stroke-linecap: round;
+    stroke-dasharray: 40 240;
+    stroke-dashoffset: 0;
+    animation: flowInfinity 0.8s linear infinite;
+    /* Faster speed */
+    filter: drop-shadow(0 0 20px rgba(0, 200, 255, 1));
+}
+
+/* Moving segment 2 (The "Purple/White Pulse") */
+.infinity-path-2 {
+    stroke: #bd00ff;
+    /* Purple accent */
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-dasharray: 20 260;
+    stroke-dashoffset: -40;
+    /* Offset start */
+    animation: flowInfinity 1.2s linear infinite reverse;
+    /* Different speed & direction */
+    filter: drop-shadow(0 0 15px rgba(189, 0, 255, 1));
+    mix-blend-mode: screen;
+    /* Additive blending for glow */
+}
+
+[data-theme='light'] .infinity-path {
+    stroke: #0284c7;
+    filter: drop-shadow(0 0 10px rgba(2, 132, 199, 0.5));
+}
+
+[data-theme='light'] .infinity-path-2 {
+    stroke: #9333ea;
+    filter: drop-shadow(0 0 10px rgba(147, 51, 234, 0.5));
+}
+
+@keyframes flowInfinity {
+    to {
+        stroke-dashoffset: -280;
+    }
+}
+
+/* Optional message text */
+.loader-message {
+    margin-top: 15px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-align: center;
+    animation: pulseText 2s infinite ease-in-out;
+}
+
+@keyframes pulseText {
+
+    0%,
+    100% {
+        opacity: 0.7;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}

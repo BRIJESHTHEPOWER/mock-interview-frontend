@@ -657,3 +657,246 @@
     padding: 13px;
   }
 }
+
+/* ============================================
+   LOGIN OVERLAY ANIMATIONS
+   ============================================ */
+
+/* Fullscreen overlay container */
+.login-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  /* Dimmed transparent background to keep page visible but focus on loader */
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: overlayFadeIn 0.3s ease-out;
+}
+
+[data-theme='light'] .login-overlay {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Overlay content wrapper */
+.overlay-content {
+  text-align: center;
+  animation: contentSlideUp 0.5s ease-out;
+}
+
+@keyframes contentSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* SVG Styles moved to InfinityLoader.css */
+
+/* Authenticating text */
+.login-overlay.authenticating h2 {
+  color: #ffffff;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #fff 40%, var(--neon-blue) 60%, #fff 80%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s linear infinite;
+}
+
+[data-theme='light'] .login-overlay.authenticating h2 {
+  background: linear-gradient(135deg, #1e293b 40%, var(--neon-blue) 60%, #1e293b 80%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Connecting dots animation */
+.connecting-dots {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.connecting-dots span {
+  width: 12px;
+  height: 12px;
+  background: var(--neon-blue);
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+  box-shadow: 0 0 15px var(--neon-blue);
+}
+
+.connecting-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.connecting-dots span:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.connecting-dots span:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+}
+
+/* ============================================
+   SUCCESS OVERLAY ANIMATION
+   ============================================ */
+
+.login-overlay.success h2 {
+  color: #ffffff;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 20px 0 10px;
+  animation: successTextPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+[data-theme='light'] .login-overlay.success h2 {
+  color: #0f172a;
+}
+
+.login-overlay.success p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  margin: 0;
+}
+
+[data-theme='light'] .login-overlay.success p {
+  color: rgba(15, 23, 42, 0.7);
+}
+
+@keyframes successTextPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Success checkmark SVG animation */
+.success-checkmark {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+}
+
+.success-checkmark svg {
+  width: 100%;
+  height: 100%;
+}
+
+.checkmark-circle {
+  stroke: #22c55e;
+  stroke-width: 3;
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: strokeCircle 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+  filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.6));
+}
+
+.checkmark-check {
+  stroke: #22c55e;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: strokeCheck 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
+  filter: drop-shadow(0 0 15px rgba(34, 197, 94, 0.5));
+}
+
+@keyframes strokeCircle {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes strokeCheck {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Responsive overlay adjustments */
+@media (max-width: 768px) {
+  .spinning-logo {
+    width: 100px;
+    height: 100px;
+  }
+
+  .login-overlay.authenticating h2,
+  .login-overlay.success h2 {
+    font-size: 1.5rem;
+  }
+
+  .success-checkmark {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .spinning-logo {
+    width: 80px;
+    height: 80px;
+  }
+
+  .login-overlay.authenticating h2,
+  .login-overlay.success h2 {
+    font-size: 1.3rem;
+  }
+
+  .success-checkmark {
+    width: 80px;
+    height: 80px;
+  }
+
+  .connecting-dots span {
+    width: 10px;
+    height: 10px;
+  }
+}

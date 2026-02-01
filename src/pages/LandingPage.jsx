@@ -3,13 +3,14 @@
 // ============================================
 // Cinematic frontpage with Hero, Testimonials, and Footer
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
 import { useAuth } from '../contexts/AuthContext';
 import { db } from '../config/firebase';
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import logo from '../assets/logo.png';
+import InfinityLoader from '../components/InfinityLoader';
 import './LandingPage.css';
 
 const TileGrid = () => {
@@ -54,20 +55,28 @@ const TileGrid = () => {
 
 const VideoBackground = () => {
     const [activeIndex, setActiveIndex] = useState(0);
+    const [loadedCount, setLoadedCount] = useState(0);
     const totalFrames = 30;
 
     // Generate frame paths once
-    const frames = Array.from({ length: totalFrames }, (_, i) =>
+    const frames = useMemo(() => Array.from({ length: totalFrames }, (_, i) =>
         `/ezgif-frame-${String(i + 1).padStart(3, '0')}.jpg`
-    );
+    ), []);
 
     useEffect(() => {
+        // Only start animation when all images are loaded
+        if (loadedCount < totalFrames) return;
+
         const interval = setInterval(() => {
             setActiveIndex(prev => (prev + 1) % totalFrames);
         }, 150); // 150ms = Slightly slower, perfectly synced with 0.2s transition
 
         return () => clearInterval(interval);
-    }, []);
+    }, [loadedCount]);
+
+    const handleImageLoad = () => {
+        setLoadedCount(prev => prev + 1);
+    };
 
     return (
         <div className="video-background">
@@ -79,6 +88,9 @@ const VideoBackground = () => {
                     src={src}
                     alt=""
                     className={`frame-image ${index === activeIndex ? 'active' : ''}`}
+                    onLoad={handleImageLoad}
+                    onError={handleImageLoad} // Count errors too to avoid stalling
+                    loading="eager"
                 />
             ))}
         </div>
@@ -504,7 +516,9 @@ export default function LandingPage() {
                         </div>
                     </div>
                 ) : (
-                    <div className="loading-testimonials">Loading stories...</div>
+                    <div className="loading-testimonials">
+                        <InfinityLoader message="Loading success stories..." />
+                    </div>
                 )}
             </section>
 
