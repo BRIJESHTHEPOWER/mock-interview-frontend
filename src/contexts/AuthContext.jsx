@@ -73,8 +73,8 @@ export const AuthProvider = ({ children }) => {
     }
 
     // Reset password
-    const resetPassword = (email) => {
-        return sendPasswordResetEmail(auth, email);
+    const resetPassword = (email, actionCodeSettings) => {
+        return sendPasswordResetEmail(auth, email, actionCodeSettings);
     };
 
     const value = {

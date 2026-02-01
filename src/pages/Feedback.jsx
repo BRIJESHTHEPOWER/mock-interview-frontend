@@ -27,7 +27,6 @@ export default function Feedback() {
                 userId: currentUser?.uid || 'anonymous',
                 userName: currentUser?.displayName || 'Anonymous User',
                 userAvatar: currentUser?.photoURL || '',
-                userRole: 'Aspiring Developer',
                 rating,
                 comment,
                 createdAt: new Date()

@@ -835,15 +835,25 @@
     font-size: 1.1rem;
 }
 
-.link-col a {
+.link-col a,
+.footer-btn-link {
     display: block;
     color: var(--text-secondary);
     text-decoration: none;
     margin-bottom: 12px;
     transition: color 0.2s;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    text-align: left;
+    width: 100%;
 }
 
-.link-col a:hover {
+.link-col a:hover,
+.footer-btn-link:hover {
     color: var(--neon-blue);
 }
 

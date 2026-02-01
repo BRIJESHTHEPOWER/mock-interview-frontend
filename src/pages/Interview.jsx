@@ -42,6 +42,7 @@ export default function Interview() {
 
     const timerRef = useRef(null);
     const durationRef = useRef(0); // Ref to track duration without stale closures
+    const startTimeRef = useRef(null); // Ref to track actual start time for perfection
     const initializationRef = useRef(false);
     const { startCall, stopCall, toggleMute, callStatus, isAgentSpeaking, error: retellError } = useRetell();
 
@@ -77,9 +78,11 @@ export default function Interview() {
     // Start timer when call becomes active
     useEffect(() => {
         if (callStatus === 'active') {
+            if (!startTimeRef.current) startTimeRef.current = Date.now();
             timerRef.current = setInterval(() => {
                 setTimer(prev => prev + 1);
-                durationRef.current += 1; // Update ref for reliable access
+                // Update durationRef in case of crash, but we'll use startTime for final calc
+                durationRef.current = Math.round((Date.now() - startTimeRef.current) / 1000);
             }, 1000);
         } else {
             if (timerRef.current) {
@@ -152,7 +155,9 @@ export default function Interview() {
                 setIsCameraOn(false);
             }
 
-            const finalDuration = durationRef.current; // Use Ref value for accuracy
+            const finalDuration = startTimeRef.current
+                ? Math.round((Date.now() - startTimeRef.current) / 1000)
+                : durationRef.current;
 
             console.log('📞 Interview ended, saving basic data...');
             console.log('Interview ID:', interviewId);

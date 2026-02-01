@@ -556,21 +556,21 @@ export default function LandingPage() {
                     <div className="footer-links">
                         <div className="link-col">
                             <h4>Platform</h4>
-                            <a href="#">Features</a>
-                            <a href="#">Pricing</a>
-                            <a href="#">Enterprise</a>
+                            <Link to="/features">Features</Link>
+                            <Link to="/pricing">Pricing</Link>
+                            <Link to="/enterprise">Enterprise</Link>
                             <Link to="/login">Login</Link>
                         </div>
                         <div className="link-col">
                             <h4>Resources</h4>
-                            <a href="#">Blog</a>
-                            <a href="#">Guide</a>
-                            <a href="#">Help Center</a>
+                            <Link to="/blog">Blog</Link>
+                            <Link to="/guide">Guide</Link>
+                            <Link to="/help-center">Help Center</Link>
                         </div>
                         <div className="link-col">
                             <h4>Legal</h4>
-                            <a href="#">Privacy</a>
-                            <a href="#">Terms</a>
+                            <Link to="/privacy">Privacy</Link>
+                            <Link to="/terms">Terms</Link>
                         </div>
                     </div>
 

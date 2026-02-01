@@ -14,6 +14,8 @@ import LandingPage from './pages/LandingPage';
 import Feedback from './pages/Feedback';
 import FeedbackDetails from './pages/FeedbackDetails';
 import ChatbotPage from './pages/ChatbotPage';
+import Placeholder from './pages/Placeholder';
+
 
 import Navbar from './components/Navbar';
 import FloatingChatbot from './components/FloatingChatbot';
@@ -102,6 +104,17 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+
+        {/* Footer Placeholder Routes */}
+        <Route path="/features" element={<Placeholder title="Platform Features" />} />
+        <Route path="/pricing" element={<Placeholder title="Pricing Plans" />} />
+        <Route path="/enterprise" element={<Placeholder title="Enterprise Solutions" />} />
+        <Route path="/blog" element={<Placeholder title="Our Blog" />} />
+        <Route path="/guide" element={<Placeholder title="User Guide" />} />
+        <Route path="/help-center" element={<Placeholder title="Help Center" />} />
+        <Route path="/privacy" element={<Placeholder title="Privacy Policy" />} />
+        <Route path="/terms" element={<Placeholder title="Terms of Service" />} />
+
 
 
 
