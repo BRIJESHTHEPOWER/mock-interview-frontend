@@ -138,6 +138,7 @@ export default function Interview() {
 
         } catch (err) {
             console.error('❌ Error creating session:', err);
+            console.error('Target Backend URL:', BACKEND_URL);
             setError(err.response?.data?.error || err.message || 'Failed to start interview');
         }
     };
@@ -165,55 +166,38 @@ export default function Interview() {
             console.log('Job Role:', jobRole);
             console.log('Duration:', finalDuration);
 
-            // Simply update Firestore with end time and duration
+            // 1. Update Firestore status to processing (REQUIRED to happen before we leave)
             if (interviewId) {
                 await updateDoc(doc(db, 'interviews', interviewId), {
                     endedAt: new Date(),
                     duration: finalDuration,
                     status: 'processing',
                 });
-                console.log('✅ Interview data saved to Firestore');
-            } else {
-                console.error('❌ No interview ID found!');
+                console.log('✅ Interview marked as processing');
             }
 
-            // Trigger backend to fetch transcript and generate feedback
+            // 2. BACKGROUND TASKS (Don't await these)
+            // Trigger backend processing
             if (sessionData?.callId) {
-                try {
-                    console.log('🔄 Triggering feedback generation...');
-                    const response = await axios.post(`${BACKEND_URL}/process-interview`, {
-                        callId: sessionData.callId,
-                        userId: currentUser.uid,
-                        jobRole: jobRole
-                    });
-                    console.log('✅ Feedback generation response:', response.data);
-                } catch (err) {
-                    console.error('⚠️ Failed to trigger feedback:', err);
-                    console.error('Error details:', err.response?.data || err.message);
-                    // Don't block navigation on this error
-                }
-            } else {
-                console.error('❌ No call ID found in session data!');
+                console.log('🔄 Triggering feedback in background...');
+                axios.post(`${BACKEND_URL}/process-interview`, {
+                    callId: sessionData.callId,
+                    userId: currentUser.uid,
+                    jobRole: jobRole
+                }).catch(err => console.error('⚠️ Background processing error:', err));
             }
 
             // Remove live session
-            await remove(ref(rtdb, `liveSessions/${currentUser.uid}`));
-            console.log('✅ Live session removed from RTDB');
+            remove(ref(rtdb, `liveSessions/${currentUser.uid}`))
+                .catch(err => console.error('⚠️ RTDB removal error:', err));
 
-            // Navigate to dashboard - feedback will appear when webhook completes
-            console.log('🔄 Navigating to dashboard...');
-
-            // Minimal delay to ensure state updates and RTDB removal are processed
-            setTimeout(() => {
-                navigate('/dashboard');
-            }, 500);
+            // 3. IMMEDIATE NAVIGATION
+            console.log('🚀 Navigating to dashboard immediately');
+            navigate('/dashboard');
 
         } catch (err) {
-            console.error('❌ Error saving interview data:', err);
-            // Even on error, navigate away
-            setTimeout(() => {
-                navigate('/dashboard');
-            }, 500);
+            console.error('❌ Error in handleInterviewEnd:', err);
+            navigate('/dashboard');
         }
     };
 
