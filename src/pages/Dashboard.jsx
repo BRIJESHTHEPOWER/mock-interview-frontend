@@ -12,6 +12,7 @@ import {
     where,
     onSnapshot,
     deleteDoc,
+    updateDoc,
     doc,
     orderBy,
     limit
@@ -46,11 +47,16 @@ export default function Dashboard() {
         const unsubscribe = onSnapshot(
             q,
             (snapshot) => {
-                const interviewData = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
+                console.log('📊 Dashboard: Received snapshot with', snapshot.docs.length, 'interviews');
+                const interviewData = snapshot.docs
+                    .map(doc => {
+                        const data = { id: doc.id, ...doc.data() };
+                        console.log('📄 Interview:', doc.id, '- Status:', data.status, '- Has feedback:', !!data.feedback, '- userId:', data.userId);
+                        return data;
+                    })
+                    .filter(interview => !interview.isDeletedByCandidate); // Client-side filter for soft delete
 
+                console.log('✅ Dashboard: Displaying', interviewData.length, 'interviews after filtering');
                 // Data already sorted by Firestore
                 setInterviews(interviewData);
                 setLoading(false);
@@ -157,12 +163,23 @@ export default function Dashboard() {
                                             </p>
                                         )}
 
-                                        {interview.feedback && (
+                                        {interview.feedback && interview.status !== 'processing' && (
                                             <div className="feedback-summary">
-                                                <strong>AI Score:</strong> {interview.feedback.score}
-                                                <p style={{ marginTop: '8px', fontStyle: 'italic' }}>
-                                                    "{interview.feedback.summary}"
-                                                </p>
+                                                {typeof interview.feedback === 'string' ? (
+                                                    <>
+                                                        <strong>✅ AI Feedback Generated</strong>
+                                                        <p style={{ marginTop: '8px', fontStyle: 'italic', fontSize: '14px' }}>
+                                                            {interview.feedback.substring(0, 150)}...
+                                                        </p>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <strong>AI Score:</strong> {interview.feedback.score}
+                                                        <p style={{ marginTop: '8px', fontStyle: 'italic' }}>
+                                                            "{interview.feedback.summary}"
+                                                        </p>
+                                                    </>
+                                                )}
                                             </div>
                                         )}
 
@@ -183,9 +200,12 @@ export default function Dashboard() {
                                                 className="delete-btn"
                                                 onClick={async (e) => {
                                                     e.stopPropagation();
-                                                    if (window.confirm('Are you sure you want to delete this interview history?')) {
+                                                    if (window.confirm('Are you sure you want to remove this interview from your history?')) {
                                                         try {
-                                                            await deleteDoc(doc(db, 'interviews', interview.id));
+                                                            // Soft delete: Update flag instead of deleting document
+                                                            await updateDoc(doc(db, 'interviews', interview.id), {
+                                                                isDeletedByCandidate: true
+                                                            });
                                                         } catch (err) {
                                                             console.error('Error deleting interview:', err);
                                                             alert('Failed to delete.');
@@ -193,7 +213,7 @@ export default function Dashboard() {
                                                     }
                                                 }}
                                             >
-                                                🗑 Delete
+                                                🗑 Remove
                                             </button>
                                         </div>
                                     </div>

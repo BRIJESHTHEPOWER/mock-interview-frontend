@@ -113,7 +113,6 @@ export default function InterviewSetup() {
                         <li>✅ Role-specific questions</li>
                         <li>✅ Real-time conversation</li>
                         <li>✅ Detailed feedback report</li>
-                        <li>✅ 2 free interviews per day</li>
                     </ul>
                 </div>
 

@@ -129,27 +129,57 @@
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
 }
 
-/* THEME TOGGLE */
-.theme-toggle-btn {
+/* THEME TOGGLE SWITCH */
+.theme-switch-container {
+    width: 60px;
+    height: 30px;
     background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    width: 44px;
-    height: 44px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    margin-right: 20px;
+    overflow: hidden;
+}
+
+.theme-switch-container:hover {
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 10px rgba(0, 200, 255, 0.2);
+}
+
+.theme-switch-track {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 3px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-switch-track.light {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.theme-switch-thumb {
+    width: 24px;
+    height: 24px;
+    background: #0f172a;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    color: #e0e0e0;
+    font-size: 14px;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    color: #fff;
 }
 
-.theme-toggle-btn:hover {
-    transform: rotate(15deg);
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 15px var(--neon-purple);
+.theme-switch-track.light .theme-switch-thumb {
+    transform: translateX(30px);
+    background: white;
+    color: #333;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* ACTION BUTTONS */

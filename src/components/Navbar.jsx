@@ -55,13 +55,14 @@ export default function Navbar() {
                         </Link>
                     </div>
 
-                    <button
-                        onClick={toggleTheme}
-                        className="theme-toggle-btn"
-                        aria-label="Toggle theme"
-                    >
-                        {theme === 'dark' ? '☀️' : '🌙'}
-                    </button>
+                    {/* Premium Theme Switch */}
+                    <div className="theme-switch-container" onClick={toggleTheme} title="Toggle Visual Mode">
+                        <div className={`theme-switch-track ${theme === 'light' ? 'light' : ''}`}>
+                            <div className="theme-switch-thumb">
+                                {theme === 'dark' ? '🌙' : '☀️'}
+                            </div>
+                        </div>
+                    </div>
 
                     {currentUser ? (
                         <>

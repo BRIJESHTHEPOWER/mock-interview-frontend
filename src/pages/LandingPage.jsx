@@ -69,7 +69,7 @@ const VideoBackground = () => {
 
         const interval = setInterval(() => {
             setActiveIndex(prev => (prev + 1) % totalFrames);
-        }, 150); // 150ms = Slightly slower, perfectly synced with 0.2s transition
+        }, 120); // 120ms = Slower cinematic motion ~8fps
 
         return () => clearInterval(interval);
     }, [loadedCount]);
@@ -259,24 +259,31 @@ export default function LandingPage() {
         }
 
         try {
-            // Send email using EmailJS
+            // 1. Send email using EmailJS (Welcome email)
             await emailjs.send(
                 serviceId,
                 templateId,
                 {
-                    user_email: email, // Make sure your EmailJS template uses {{user_email}}
+                    user_email: email,
                     to_name: "Subscriber",
                     message: "Welcome to Infinity Platform!",
                 },
                 publicKey
             );
 
+            // 2. Save to Backend Database
+            await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/subscribe`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+
             setSubStatus('success');
             setEmail('');
             setTimeout(() => setSubStatus('idle'), 3000);
 
         } catch (err) {
-            console.error("EmailJS Error:", err);
+            console.error("Subscription Error:", err);
             setSubStatus('error');
         }
     };

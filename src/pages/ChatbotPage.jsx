@@ -29,8 +29,8 @@ export default function ChatbotPage() {
         scrollToBottom();
     }, [messages]);
 
-    // Call OpenRouter API for AI response
-    const callOpenRouterAPI = async (userMessage, history) => {
+    // Call Groq API for AI response
+    const callGroqAPI = async (userMessage, history) => {
         try {
             // Use environment variable for API URL (works for both local and production)
             const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -81,7 +81,7 @@ export default function ChatbotPage() {
             }));
 
             // Get AI response
-            const aiResponse = await callOpenRouterAPI(inputValue, history);
+            const aiResponse = await callGroqAPI(inputValue, history);
 
             const botMessage = {
                 type: 'bot',
@@ -97,7 +97,7 @@ export default function ChatbotPage() {
                 text: '❌ Sorry, I encountered an error. Please try again.\n\n' +
                     'Possible issues:\n' +
                     '• Backend server not running\n' +
-                    '• OpenRouter API key not configured\n' +
+                    '• Groq API key not configured\n' +
                     '• Network connection issue',
                 timestamp: new Date()
             };

@@ -5,8 +5,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { db } from '../config/firebase';
-import { addDoc, collection } from 'firebase/firestore';
 import './Feedback.css';
 
 export default function Feedback() {
@@ -23,20 +21,31 @@ export default function Feedback() {
 
         setSubmitting(true);
         try {
-            await addDoc(collection(db, 'feedback'), {
-                userId: currentUser?.uid || 'anonymous',
-                userName: currentUser?.displayName || 'Anonymous User',
-                userAvatar: currentUser?.photoURL || '',
-                rating,
-                comment,
-                createdAt: new Date()
+            const token = currentUser ? await currentUser.getIdToken() : null;
+
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/feedback`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token && { 'Authorization': `Bearer ${token}` })
+                },
+                body: JSON.stringify({
+                    userId: currentUser?.uid,
+                    rating,
+                    message: comment,
+                    category: 'General'
+                })
             });
+
+            if (!response.ok) {
+                throw new Error('Failed to submit feedback');
+            }
 
             alert('Thank you for your feedback!');
             navigate('/');
         } catch (error) {
             console.error('Error submitting feedback:', error);
-            alert(`Failed to submit feedback: ${error.message} \nCode: ${error.code}`);
+            alert(`Failed to submit feedback`);
         } finally {
             setSubmitting(false);
         }

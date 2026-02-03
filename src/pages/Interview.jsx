@@ -107,7 +107,10 @@ export default function Interview() {
     const createInterviewSession = async () => {
         try {
             console.log('📞 Creating interview session for:', jobRole);
-            const response = await axios.post(`${BACKEND_URL}/create-interview`, { jobRole });
+            const response = await axios.post(`${BACKEND_URL}/create-interview`, {
+                jobRole,
+                userId: currentUser?.uid
+            });
 
             if (!response.data.success) {
                 throw new Error(response.data.error || 'Failed to create session');
@@ -179,12 +182,20 @@ export default function Interview() {
             // 2. BACKGROUND TASKS (Don't await these)
             // Trigger backend processing
             if (sessionData?.callId) {
-                console.log('🔄 Triggering feedback in background...');
+                console.log('🔄 Triggering feedback processing for callId:', sessionData.callId);
                 axios.post(`${BACKEND_URL}/process-interview`, {
                     callId: sessionData.callId,
                     userId: currentUser.uid,
                     jobRole: jobRole
-                }).catch(err => console.error('⚠️ Background processing error:', err));
+                })
+                    .then(response => {
+                        console.log('✅ Feedback processing started successfully:', response.data);
+                    })
+                    .catch(err => {
+                        console.error('❌ Feedback processing ERROR:', err.response?.data || err.message);
+                    });
+            } else {
+                console.warn('⚠️ No callId available, skipping feedback processing');
             }
 
             // Remove live session
@@ -192,8 +203,8 @@ export default function Interview() {
                 .catch(err => console.error('⚠️ RTDB removal error:', err));
 
             // 3. IMMEDIATE NAVIGATION
-            console.log('🚀 Navigating to dashboard immediately');
-            navigate('/dashboard');
+            console.log('🚀 Navigating to feedback page immediately');
+            navigate(`/interview/history/${interviewId}`); // Go to feedback page to wait for results
 
         } catch (err) {
             console.error('❌ Error in handleInterviewEnd:', err);
