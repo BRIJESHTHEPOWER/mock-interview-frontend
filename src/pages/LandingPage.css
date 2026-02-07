@@ -969,44 +969,159 @@
 
 /* RESPONSIVE DESIGN */
 @media (max-width: 768px) {
+    /* HERO SECTION - Mobile Optimized */
+    .hero-section {
+        height: 100vh;
+        padding-top: 60px;
+        padding-bottom: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .hero-content {
+        z-index: 10;
+        padding: 0 20px;
+        max-width: 100%;
+    }
+
     .hero-title {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
+        line-height: 1.2;
         padding: 0 10px;
+        margin-bottom: 20px;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8), 
+                     0 0 30px rgba(0, 200, 255, 0.6);
+    }
+
+    .text-gradient {
+        font-size: 2rem;
+        margin-top: 8px;
     }
 
     .hero-subtitle {
-        font-size: 1rem;
-        padding: 0 10px;
+        font-size: 0.95rem;
+        padding: 0 15px;
+        margin-bottom: 30px;
+        line-height: 1.5;
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.8);
     }
 
     .cta-btn {
-        padding: 15px 30px;
+        padding: 14px 32px;
         font-size: 1rem;
+        margin-top: 10px;
     }
 
+    /* VIDEO BACKGROUND - Reduce opacity on mobile */
+    .video-overlay {
+        background:
+            radial-gradient(circle at center, transparent 20%, rgba(0, 0, 0, 0.5) 70%, #000000 100%),
+            url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300c8ff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .frame-image {
+        filter: contrast(1.1) brightness(0.8) saturate(1.0);
+    }
+
+    /* SCROLL INDICATOR */
     .scroll-indicator {
-        bottom: 30px;
-        width: 45px;
-        height: 45px;
+        bottom: 20px;
+        width: 50px;
+        height: 50px;
     }
 
     .scroll-indicator svg {
-        width: 35px;
-        height: 35px;
+        width: 24px;
+        height: 24px;
     }
 
+    /* SIDE NAVIGATION - Hide on mobile */
+    .side-navigation {
+        display: none;
+    }
+
+    /* SECTIONS */
     .quote-section,
     .testimonials-section,
-    .faq-section {
-        padding: 60px 20px;
+    .faq-section,
+    .future-plans-section {
+        padding: 50px 15px;
     }
 
     .powerful-quote {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
+        line-height: 1.4;
+        padding: 0 10px;
     }
 
     .section-title {
+        font-size: 1.8rem;
+        margin-bottom: 40px;
+    }
+
+    /* FUTURE PLANS */
+    .future-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 0 10px;
+    }
+
+    .future-card {
+        padding: 30px 20px;
+    }
+
+    .future-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+
+    .future-card h3 {
+        font-size: 1.3rem;
+    }
+
+    /* TESTIMONIALS */
+    .testimonials-carousel-container {
+        padding: 10px 0 30px;
+    }
+
+    .testimonial-slide {
+        padding: 0 10px;
+    }
+
+    .testimonial-card {
+        padding: 20px;
+    }
+
+    .t-avatar {
+        width: 50px;
+        height: 50px;
         font-size: 2rem;
+    }
+
+    .t-name {
+        font-size: 1rem;
+    }
+
+    .t-text {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    /* FAQ */
+    .faq-question {
+        padding: 15px 18px;
+        font-size: 1rem;
+    }
+
+    .faq-answer {
+        padding: 0 18px 18px;
+        font-size: 0.9rem;
+    }
+
+    /* FOOTER */
+    .footer {
+        padding: 50px 15px 30px;
     }
 
     .footer-content {
@@ -1026,7 +1141,15 @@
     .footer-links {
         width: 100%;
         justify-content: space-around;
-        gap: 30px;
+        gap: 20px;
+    }
+
+    .link-col h4 {
+        font-size: 1rem;
+    }
+
+    .link-col a {
+        font-size: 0.9rem;
     }
 
     .brand-logo-container {
@@ -1035,6 +1158,11 @@
 
     .newsletter-form {
         flex-direction: column;
+        gap: 10px;
+    }
+
+    .newsletter-form input {
+        width: 100%;
     }
 
     .newsletter-form button {
@@ -1043,5 +1171,38 @@
 
     .social-links {
         justify-content: center;
+    }
+
+    .footer-bottom {
+        font-size: 0.85rem;
+        padding: 15px 10px;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 1.8rem;
+    }
+
+    .text-gradient {
+        font-size: 1.6rem;
+    }
+
+    .hero-subtitle {
+        font-size: 0.85rem;
+    }
+
+    .cta-btn {
+        padding: 12px 28px;
+        font-size: 0.95rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .powerful-quote {
+        font-size: 1.2rem;
     }
 }
