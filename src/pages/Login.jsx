@@ -81,7 +81,7 @@ export default function Login() {
 
             // Wait 1.5 seconds to show success message, then navigate
             setTimeout(() => {
-                navigate('/dashboard');
+                navigate('/');
             }, 1500);
         } catch (err) {
             console.error('Auth Error:', err);
@@ -113,7 +113,7 @@ export default function Login() {
             setLoginState('success');
 
             setTimeout(() => {
-                navigate('/dashboard');
+                navigate('/');
             }, 1500);
         } catch (err) {
             console.error('Google Sign In Error:', err);
@@ -141,7 +141,7 @@ export default function Login() {
                             </svg>
                         </div>
                         <h2>Login Successful!</h2>
-                        <p>Redirecting to dashboard...</p>
+                        <p>Redirecting to home...</p>
                     </div>
                 </div>
             )}

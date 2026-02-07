@@ -22,7 +22,16 @@ export default function FeedbackDetails() {
         // REAL-TIME LISTENER
         const unsubscribe = onSnapshot(docRef, (docSnap) => {
             if (docSnap.exists()) {
-                setInterview({ id: docSnap.id, ...docSnap.data() });
+                const data = docSnap.data();
+                console.log('📊 Firestore Update Received:');
+                console.log('  - Document ID:', docSnap.id);
+                console.log('  - Status:', data.status);
+                console.log('  - Has Feedback:', !!data.feedback);
+                console.log('  - Feedback Length:', data.feedback?.length || 0);
+                console.log('  - Feedback Preview:', data.feedback?.substring(0, 100));
+                console.log('  - Full Data:', data);
+
+                setInterview({ id: docSnap.id, ...data });
             } else {
                 console.log("Interview not found, redirecting...");
                 // Only redirect if absolutely sure (maybe give it a moment?)

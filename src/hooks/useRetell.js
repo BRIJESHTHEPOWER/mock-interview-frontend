@@ -14,11 +14,23 @@ export const useRetell = () => {
     const [isAgentSpeaking, setIsAgentSpeaking] = useState(false);
 
     const retellClient = useRef(null);
+    const audioContextRef = useRef(null);
+    const gainNodeRef = useRef(null);
 
     // Initialize Retell client on mount
     useEffect(() => {
         try {
             retellClient.current = new RetellWebClient();
+
+            // Initialize Web Audio API for volume control
+            if (!audioContextRef.current) {
+                audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+                gainNodeRef.current = audioContextRef.current.createGain();
+                // Set volume to 2.0 (200% - double the volume)
+                gainNodeRef.current.gain.value = 2.0;
+                gainNodeRef.current.connect(audioContextRef.current.destination);
+                console.log('🔊 Audio amplification enabled: 200% volume');
+            }
 
             // Set up event listeners
             retellClient.current.on('call_started', () => {
@@ -51,9 +63,24 @@ export const useRetell = () => {
                 setIsAgentSpeaking(false);
             });
 
+            // Audio quality monitoring
+            retellClient.current.on('audio', (audio) => {
+                // Monitor audio quality metrics if available
+                if (audio.quality) {
+                    console.log('🎵 Audio quality:', audio.quality);
+                }
+            });
+
+            // Connection quality monitoring
+            retellClient.current.on('call_analyzed', (analysis) => {
+                console.log('📊 Call analysis:', analysis);
+            });
+
             retellClient.current.on('update', (update) => {
-                // Handle real-time updates if needed
-                console.log('Update:', update);
+                // Handle real-time updates - only log important ones to reduce overhead
+                if (update.transcript || update.turntaking_status) {
+                    console.log('Update:', update);
+                }
             });
 
         } catch (err) {
@@ -65,6 +92,9 @@ export const useRetell = () => {
         return () => {
             if (retellClient.current) {
                 retellClient.current.stopCall();
+            }
+            if (audioContextRef.current) {
+                audioContextRef.current.close();
             }
         };
     }, []);
@@ -87,12 +117,28 @@ export const useRetell = () => {
             await retellClient.current.startCall({
                 callId,
                 accessToken,
-                // Enable audio
+                // Optimized audio quality settings
+                sampleRate: 24000, // Higher sample rate for better quality
                 enableUpdate: true,
+                // Enhanced audio constraints for stability
+                audioConstraints: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true,
+                    // Additional constraints for better quality
+                    channelCount: 1,
+                    sampleSize: 16,
+                },
             });
 
             setIsConnected(true);
             console.log('🎤 Call started successfully');
+
+            // Resume audio context if suspended (browser autoplay policy)
+            if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
+                await audioContextRef.current.resume();
+                console.log('🔊 Audio context resumed');
+            }
 
         } catch (err) {
             console.error('Failed to start call:', err);

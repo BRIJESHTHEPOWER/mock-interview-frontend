@@ -51,9 +51,16 @@ export default function Interview() {
         if (initializationRef.current) return;
         initializationRef.current = true;
 
+        // Check if HTTPS is required (for mobile browsers)
+        const isSecureContext = window.isSecureContext;
+        if (!isSecureContext && window.location.hostname !== 'localhost') {
+            console.warn('⚠️ Not a secure context. Camera/microphone may not work.');
+            setError('Please use HTTPS for camera and microphone access');
+        }
+
         createInterviewSession();
 
-        // Initialize camera
+        // Initialize camera with mobile-specific handling
         enableCamera();
 
         // Cleanup on unmount
@@ -107,9 +114,18 @@ export default function Interview() {
     const createInterviewSession = async () => {
         try {
             console.log('📞 Creating interview session for:', jobRole);
+            console.log('🌐 Backend URL:', BACKEND_URL);
+            console.log('📱 User Agent:', navigator.userAgent);
+            console.log('🔒 Secure Context:', window.isSecureContext);
+
             const response = await axios.post(`${BACKEND_URL}/create-interview`, {
                 jobRole,
                 userId: currentUser?.uid
+            }, {
+                timeout: 30000, // 30 second timeout for mobile networks
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             });
 
             if (!response.data.success) {
@@ -117,6 +133,7 @@ export default function Interview() {
             }
 
             const { callId, accessToken, agentId } = response.data;
+            console.log('✅ Session created:', { callId, agentId });
             setSessionData({ callId, accessToken, agentId });
 
             const newInterviewId = `interview_${Date.now()}`;
@@ -137,12 +154,30 @@ export default function Interview() {
                 startedAt: new Date().toISOString()
             });
 
+            console.log('🎤 Starting Retell call...');
             await startCall(callId, accessToken);
 
         } catch (err) {
             console.error('❌ Error creating session:', err);
             console.error('Target Backend URL:', BACKEND_URL);
-            setError(err.response?.data?.error || err.message || 'Failed to start interview');
+            console.error('Error details:', {
+                message: err.message,
+                response: err.response?.data,
+                status: err.response?.status
+            });
+
+            let errorMessage = 'Failed to start interview';
+            if (err.code === 'ECONNABORTED') {
+                errorMessage = 'Connection timeout. Please check your internet connection.';
+            } else if (err.response?.status === 0) {
+                errorMessage = 'Cannot connect to server. Please check your internet connection.';
+            } else if (err.response?.data?.error) {
+                errorMessage = err.response.data.error;
+            } else if (err.message) {
+                errorMessage = err.message;
+            }
+
+            setError(errorMessage);
         }
     };
 
@@ -233,12 +268,46 @@ export default function Interview() {
 
     const enableCamera = async () => {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            console.log('📷 Requesting camera/microphone access...');
+
+            // Mobile-friendly constraints
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const constraints = {
+                video: {
+                    width: { ideal: isMobile ? 640 : 1280 },
+                    height: { ideal: isMobile ? 480 : 720 },
+                    facingMode: 'user'
+                },
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true,
+                    // Mobile-specific audio settings
+                    sampleRate: isMobile ? 16000 : 24000,
+                    channelCount: 1
+                }
+            };
+
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            console.log('✅ Camera/microphone access granted');
             setLocalStream(stream);
             setIsCameraOn(true);
         } catch (err) {
-            console.error("Error accessing camera:", err);
-            // Don't alert on mount, just fail silently or show UI state
+            console.error("❌ Error accessing camera:", err);
+            console.error('Error name:', err.name);
+            console.error('Error message:', err.message);
+
+            // Provide helpful error messages
+            let errorMsg = 'Camera access denied';
+            if (err.name === 'NotAllowedError') {
+                errorMsg = 'Please allow camera and microphone access in your browser settings';
+            } else if (err.name === 'NotFoundError') {
+                errorMsg = 'No camera or microphone found on your device';
+            } else if (err.name === 'NotReadableError') {
+                errorMsg = 'Camera is being used by another application';
+            }
+
+            setError(errorMsg);
             setIsCameraOn(false);
         }
     };
@@ -322,7 +391,7 @@ export default function Interview() {
         }
     };
 
-    // INLINE STYLES TO ENSURE VISIBILITY
+    // RESPONSIVE STYLES FOR MOBILE AND WEB
     const styles = {
         container: {
             position: 'fixed',
@@ -330,34 +399,37 @@ export default function Interview() {
             left: 0,
             width: '100vw',
             height: '100vh',
-            backgroundColor: '#f0f2f5', // LIGHT GREY BACKGROUND
+            backgroundColor: '#f0f2f5',
             zIndex: 9999,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
+            padding: window.innerWidth <= 768 ? '0' : '10px',
         },
         window: {
-            width: '90%',
-            maxWidth: '1200px',
-            height: '80%',
-            minHeight: '600px',
-            backgroundColor: '#ffffff', // WHITE WINDOW
-            borderRadius: '12px',
+            width: window.innerWidth <= 768 ? '100%' : '90%',
+            maxWidth: window.innerWidth <= 768 ? '100%' : '1200px',
+            height: window.innerWidth <= 768 ? '100%' : '90%',
+            minHeight: window.innerWidth <= 768 ? '100vh' : '600px',
+            backgroundColor: '#ffffff',
+            borderRadius: window.innerWidth <= 768 ? '0' : '12px',
             display: 'flex',
             flexDirection: 'column',
             position: 'relative',
             overflow: 'hidden',
-            border: '1px solid #e0e0e0',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+            border: window.innerWidth <= 768 ? 'none' : '1px solid #e0e0e0',
+            boxShadow: window.innerWidth <= 768 ? 'none' : '0 4px 20px rgba(0,0,0,0.1)'
         },
         header: {
-            padding: '20px',
+            padding: window.innerWidth <= 768 ? '12px 15px' : '20px',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             zIndex: 10,
-            color: '#202124', // DARK TEXT
-            borderBottom: '1px solid #f0f0f0'
+            color: '#202124',
+            borderBottom: '1px solid #f0f0f0',
+            flexWrap: 'wrap',
+            gap: '10px'
         },
         stage: {
             flex: 1,
@@ -366,30 +438,54 @@ export default function Interview() {
             alignItems: 'center',
             position: 'relative',
             background: '#ffffff',
-            overflow: 'hidden' // Ensure content doesn't push controls out
+            overflow: 'hidden',
+            minHeight: 0 // Important for flex children
         },
         controls: {
-            height: '80px',
-            backgroundColor: '#ffffff', // WHITE BAR
+            height: window.innerWidth <= 768 ? '70px' : '80px',
+            backgroundColor: '#ffffff',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '20px',
+            gap: window.innerWidth <= 768 ? '15px' : '20px',
             borderTop: '1px solid #e0e0e0',
-            flexShrink: 0, // Prevent shrinking
-            zIndex: 20
+            flexShrink: 0,
+            zIndex: 20,
+            padding: window.innerWidth <= 768 ? '0 10px' : '0'
         },
         button: {
-            width: '60px',
-            height: '60px',
+            width: window.innerWidth <= 768 ? '50px' : '60px',
+            height: window.innerWidth <= 768 ? '50px' : '60px',
             borderRadius: '50%',
             border: '1px solid #e0e0e0',
-            fontSize: '24px',
+            fontSize: window.innerWidth <= 768 ? '20px' : '24px',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 2px 5px rgba(0,0,0,0.05)'
+            boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
+            flexShrink: 0
+        },
+        pip: {
+            position: 'absolute',
+            bottom: window.innerWidth <= 768 ? '80px' : '20px',
+            right: window.innerWidth <= 768 ? '10px' : '20px',
+            width: window.innerWidth <= 768 ? '120px' : '240px',
+            height: window.innerWidth <= 768 ? '80px' : '160px',
+            backgroundColor: '#f1f3f4',
+            borderRadius: window.innerWidth <= 768 ? '8px' : '12px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            color: '#5f6368',
+            fontSize: window.innerWidth <= 768 ? '12px' : '14px',
+            border: '1px solid #e0e0e0',
+            overflow: 'hidden',
+            boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
+            zIndex: 20,
+            cursor: 'pointer',
+            transition: 'transform 0.2s'
         }
     };
 
@@ -475,14 +571,7 @@ export default function Interview() {
                     {/* PiP VIEW (Clickable to maximize) */}
                     <div
                         onClick={toggleView}
-                        style={{
-                            position: 'absolute', bottom: '20px', right: '20px',
-                            width: '240px', height: '160px', backgroundColor: '#f1f3f4',
-                            borderRadius: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
-                            color: '#5f6368', fontSize: '14px', border: '1px solid #e0e0e0',
-                            overflow: 'hidden', boxShadow: '0 4px 10px rgba(0,0,0,0.2)', zIndex: 20,
-                            cursor: 'pointer', transition: 'transform 0.2s'
-                        }}
+                        style={styles.pip}
                         onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                         onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                         title="Click to swap view"
