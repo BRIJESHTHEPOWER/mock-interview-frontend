@@ -361,9 +361,12 @@ export default function LandingPage() {
     return (
         <div className="landing-container">
 
-            {/* Hero Section — VideoBackground lives INSIDE so it's sized relative to hero */}
+            {/* Fixed video backdrop — position:fixed sits behind all page content.
+                Other sections have solid backgrounds so they cover it when scrolled. */}
+            <VideoBackground />
+
+            {/* Hero Section */}
             <section className="hero-section">
-                <VideoBackground />
                 <div className="hero-content">
                     <h1 className="hero-title">
                         Forge Your Future <br />

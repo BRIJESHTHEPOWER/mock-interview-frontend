@@ -4,19 +4,19 @@
 
 .landing-container {
     min-height: 100vh;
-    background-color: var(--bg-primary);
+    /* background is transparent for hero — fixed video shows through.
+       Other sections have solid backgrounds that cover the video naturally. */
+    background-color: transparent;
     position: relative;
-    /* Context for absolute video */
     color: var(--text-primary);
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: color 0.3s ease;
     padding-bottom: 0;
     overflow-x: hidden;
-    /* NOTE: Do NOT add overflow-y here — it breaks position:fixed children on iOS/Android */
 }
 
 [data-theme='light'] .landing-container {
-    background-color: #f4f6f9;
-    /* Solid light background for content below hero */
+    /* Light theme handled per-section, not on container */
+    background-color: transparent;
 }
 
 /* HERO SECTION */
@@ -31,9 +31,10 @@
     /* Hero always keeps dark aesthetic due to video background */
     color: #ffffff;
     position: relative;
-    /* padding-top accounts for fixed navbar so content centers in remaining space */
+    /* padding-top reserves space for fixed navbar */
     padding-top: 80px;
     box-sizing: border-box;
+    background: transparent !important;
 }
 
 .hero-content {
@@ -352,15 +353,16 @@
 /* Video Background Player */
 /* Video Background Player */
 .video-background {
-    /* height:100% would only cover (100dvh - padding-top) = missing top 80px
-       Use explicit 100dvh to always cover the full hero section */
-    position: absolute;
+    /* position:fixed = always covers 100% viewport regardless of parent container.
+       No more height percentage issues, no dvh mismatch, works on all mobile browsers.
+       z-index:-1 = sits behind everything. Other sections have solid backgrounds
+       so they naturally cover this video when user scrolls past the hero. */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh;
-    height: 100dvh;
-    z-index: 0;
+    height: 100%;
+    z-index: -1;
     overflow: hidden;
     background-color: #000;
     pointer-events: none;
@@ -450,15 +452,16 @@
     background: transparent !important;
 }
 
+/* All content sections sit ABOVE the fixed video (z-index:-1).
+   Solid backgrounds ensure fixed video is fully covered when scrolled. */
 .quote-section,
+.future-plans-section,
 .testimonials-section,
+.faq-section,
 .footer {
     position: relative;
-    z-index: 2;
+    z-index: 1;
     background: var(--bg-primary);
-    /* Use theme background, but might need opacity if checking glass effect */
-    /* If we want the video to show through slightly, we can use rgba with var? 
-       But var has hex. Let's use bg-primary which is opaque usually. */
 }
 
 /* In light mode, we want a solid background for these sections so text is readable */
