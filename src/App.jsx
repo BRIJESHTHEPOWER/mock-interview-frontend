@@ -20,6 +20,7 @@ import Placeholder from './pages/Placeholder';
 import Navbar from './components/Navbar';
 import FloatingChatbot from './components/FloatingChatbot';
 import './App.css';
+import './pages/mediaquery.css';
 
 // Protected route wrapper
 function ProtectedRoute({ children }) {

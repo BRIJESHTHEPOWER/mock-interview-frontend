@@ -212,3 +212,81 @@
 [data-theme='light'] .transcript-box pre {
     color: #334155;
 }
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 768px) {
+    .feedback-details-container {
+        padding: 84px 14px 28px;
+    }
+
+    .feedback-details-card {
+        padding: 22px 16px;
+        border-radius: 14px;
+    }
+
+    .feedback-title {
+        font-size: 1.6rem;
+    }
+
+    .feedback-meta-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 14px;
+    }
+
+    .feedback-score-value {
+        font-size: 2.4rem;
+    }
+
+    .feedback-text-box {
+        padding: 18px;
+    }
+
+    .feedback-text-box pre {
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .transcript-box {
+        max-height: 300px;
+        padding: 14px;
+    }
+
+    .transcript-box pre {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .feedback-details-container {
+        padding: 78px 10px 20px;
+    }
+
+    .feedback-details-card {
+        padding: 18px 12px;
+        border-radius: 12px;
+    }
+
+    .feedback-title {
+        font-size: 1.3rem;
+    }
+
+    .feedback-score-value {
+        font-size: 2rem;
+    }
+
+    .feedback-text-box pre,
+    .transcript-box pre {
+        font-size: 13px;
+    }
+
+    .feedback-section-title {
+        font-size: 1.05rem;
+    }
+
+    .feedback-subsection-title {
+        font-size: 1rem;
+    }
+}
