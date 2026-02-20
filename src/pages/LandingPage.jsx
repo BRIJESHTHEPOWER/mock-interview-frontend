@@ -360,10 +360,10 @@ export default function LandingPage() {
 
     return (
         <div className="landing-container">
-            <VideoBackground />
 
-            {/* Hero Section */}
+            {/* Hero Section — VideoBackground lives INSIDE so it's sized relative to hero */}
             <section className="hero-section">
+                <VideoBackground />
                 <div className="hero-content">
                     <h1 className="hero-title">
                         Forge Your Future <br />

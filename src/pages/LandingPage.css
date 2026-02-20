@@ -352,29 +352,29 @@
 /* Video Background Player */
 /* Video Background Player */
 .video-background {
+    /* Now inside hero-section (position:relative), so absolute positioning
+       is relative to hero-section — height:100% always exactly matches hero */
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh;
-    height: 100dvh;
-    /* Dynamic viewport height — matches hero section */
+    height: 100%;
     z-index: 0;
     overflow: hidden;
     background-color: #000;
+    pointer-events: none;
 }
 
 .frame-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center center;
     position: absolute;
     top: 0;
     left: 0;
     opacity: 0;
-    /* Instant cut for video emulation (removes blank/flicker) */
     will-change: opacity;
-    /* Slightly boosted brightness to cut through overlay */
     filter: contrast(1.2) brightness(1.2) saturate(1.1);
 }
 
@@ -1033,13 +1033,7 @@
         margin-top: 10px;
     }
 
-    /* VIDEO BACKGROUND - stays absolute (position:fixed breaks on iOS with overflow parent) */
-    .video-background {
-        position: absolute;
-        height: 100vh;
-        height: 100dvh;
-    }
-
+    /* VIDEO OVERLAY - slightly darker on mobile for text readability */
     .video-overlay {
         background:
             radial-gradient(circle at center, transparent 15%, rgba(0, 0, 0, 0.55) 65%, #000000 100%),
