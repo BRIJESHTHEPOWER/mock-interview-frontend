@@ -11,7 +11,7 @@
     transition: background-color 0.3s ease, color 0.3s ease;
     padding-bottom: 0;
     overflow-x: hidden;
-    overflow-y: auto;
+    /* NOTE: Do NOT add overflow-y here — it breaks position:fixed children on iOS/Android */
 }
 
 [data-theme='light'] .landing-container {
@@ -31,8 +31,9 @@
     /* Hero always keeps dark aesthetic due to video background */
     color: #ffffff;
     position: relative;
-    /* Offset for fixed navbar using padding instead of pushing content down */
-    padding-top: 0;
+    /* padding-top accounts for fixed navbar so content centers in remaining space */
+    padding-top: 80px;
+    box-sizing: border-box;
 }
 
 .hero-content {
@@ -50,6 +51,17 @@
     color: #ffffff;
 }
 
+/* Used in JSX: <span className="gradient-text"> */
+.gradient-text {
+    background: linear-gradient(90deg, #00c8ff, #0080ff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: block;
+    margin-top: 10px;
+}
+
+/* Legacy alias (kept for safety) */
 .text-gradient {
     background: linear-gradient(90deg, #00c8ff, #0080ff);
     background-clip: text;
@@ -346,7 +358,7 @@
     width: 100%;
     height: 100vh;
     height: 100dvh;
-    /* Dynamic viewport height for mobile */
+    /* Dynamic viewport height — matches hero section */
     z-index: 0;
     overflow: hidden;
     background-color: #000;
@@ -973,13 +985,13 @@
 /* RESPONSIVE DESIGN */
 @media (max-width: 768px) {
 
-    /* HERO SECTION - Mobile Optimized */
+    /* HERO SECTION - Full screen on mobile */
     .hero-section {
         height: 100vh;
         height: 100dvh;
-        /* No padding-top: content is centered with margin-top offset */
-        padding-top: 0;
+        padding-top: 80px;
         padding-bottom: 0;
+        box-sizing: border-box;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -989,8 +1001,7 @@
         z-index: 10;
         padding: 0 20px;
         max-width: 100%;
-        /* Shift content slightly upward to visually center accounting for navbar */
-        margin-top: -40px;
+        margin-top: 0;
     }
 
     .hero-title {
@@ -1002,6 +1013,7 @@
             0 0 30px rgba(0, 200, 255, 0.6);
     }
 
+    .gradient-text,
     .text-gradient {
         font-size: 2rem;
         margin-top: 8px;
@@ -1021,11 +1033,11 @@
         margin-top: 10px;
     }
 
-    /* VIDEO BACKGROUND - full height on mobile, slightly darker overlay */
+    /* VIDEO BACKGROUND - stays absolute (position:fixed breaks on iOS with overflow parent) */
     .video-background {
+        position: absolute;
         height: 100vh;
         height: 100dvh;
-        position: fixed;
     }
 
     .video-overlay {
@@ -1199,6 +1211,7 @@
         font-size: 1.8rem;
     }
 
+    .gradient-text,
     .text-gradient {
         font-size: 1.6rem;
     }

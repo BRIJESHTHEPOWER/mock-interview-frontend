@@ -140,8 +140,10 @@
     .hero-section {
         height: 100vh;
         height: 100dvh;
-        padding-top: 0;
+        /* padding-top reserves space for fixed navbar; box-sizing keeps total height at 100dvh */
+        padding-top: 80px;
         padding-bottom: 0;
+        box-sizing: border-box;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -150,8 +152,7 @@
     .hero-content {
         padding: 0 16px;
         max-width: 100%;
-        /* Slight negative margin to visually center (accounts for fixed navbar) */
-        margin-top: -40px;
+        margin-top: 0;
     }
 
     .hero-title {
@@ -160,6 +161,8 @@
         margin-bottom: 16px;
     }
 
+    /* Both class names exist in the codebase */
+    .gradient-text,
     .text-gradient {
         font-size: 2rem;
         margin-top: 6px;
