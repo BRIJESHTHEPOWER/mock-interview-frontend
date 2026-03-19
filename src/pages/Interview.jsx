@@ -144,6 +144,7 @@ export default function Interview() {
                 jobRole,
                 callId,
                 startedAt: new Date(),
+                createdAt: new Date(),
                 status: 'active'
             });
 
@@ -183,8 +184,12 @@ export default function Interview() {
 
 
 
+    const [isProcessing, setIsProcessing] = useState(false);
+
     const handleInterviewEnd = async () => {
+        if (isProcessing) return; // Prevent double clicks
         try {
+            setIsProcessing(true);
             stopCall(); // Stop the call immediately
 
             // Turn off camera light immediately
@@ -199,11 +204,7 @@ export default function Interview() {
                 : durationRef.current;
 
             console.log('📞 Interview ended, saving basic data...');
-            console.log('Interview ID:', interviewId);
-            console.log('Call ID:', sessionData?.callId);
-            console.log('Job Role:', jobRole);
-            console.log('Duration:', finalDuration);
-
+            
             // 1. Update Firestore status to processing (REQUIRED to happen before we leave)
             if (interviewId) {
                 await updateDoc(doc(db, 'interviews', interviewId), {
@@ -214,21 +215,20 @@ export default function Interview() {
                 console.log('✅ Interview marked as processing');
             }
 
-            // 2. BACKGROUND TASKS (Don't await these)
+            // 2. BACKGROUND TASKS (Now AWAITED to fix Render cancellation)
             // Trigger backend processing
             if (sessionData?.callId) {
                 console.log('🔄 Triggering feedback processing for callId:', sessionData.callId);
-                axios.post(`${BACKEND_URL}/process-interview`, {
-                    callId: sessionData.callId,
-                    userId: currentUser.uid,
-                    jobRole: jobRole
-                })
-                    .then(response => {
-                        console.log('✅ Feedback processing started successfully:', response.data);
-                    })
-                    .catch(err => {
-                        console.error('❌ Feedback processing ERROR:', err.response?.data || err.message);
+                try {
+                    await axios.post(`${BACKEND_URL}/process-interview`, {
+                        callId: sessionData.callId,
+                        userId: currentUser.uid,
+                        jobRole: jobRole
                     });
+                    console.log('✅ Feedback processing started successfully');
+                } catch(err) {
+                    console.error('❌ Feedback processing ERROR:', err.response?.data || err.message);
+                }
             } else {
                 console.warn('⚠️ No callId available, skipping feedback processing');
             }
@@ -237,12 +237,14 @@ export default function Interview() {
             remove(ref(rtdb, `liveSessions/${currentUser.uid}`))
                 .catch(err => console.error('⚠️ RTDB removal error:', err));
 
-            // 3. IMMEDIATE NAVIGATION
+            // 3. IMMEDIATE NAVIGATION (After request finishes safely)
+            setIsProcessing(false);
             console.log('🚀 Navigating to feedback page immediately');
-            navigate(`/interview/history/${interviewId}`); // Go to feedback page to wait for results
+            navigate(`/interview/history/${interviewId}`);
 
         } catch (err) {
             console.error('❌ Error in handleInterviewEnd:', err);
+            setIsProcessing(false);
             navigate('/dashboard');
         }
     };
@@ -554,7 +556,7 @@ export default function Interview() {
                 {/* Main Stage */}
                 <div style={styles.stage}>
                     {/* Error Overlay */}
-                    {(error || retellError) && (
+                    {(error || retellError) && !isProcessing && (
                         <div style={{
                             position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
                             backgroundColor: 'rgba(255,255,255,0.9)', color: '#000',
@@ -562,6 +564,22 @@ export default function Interview() {
                         }}>
                             <p style={{ marginBottom: '20px', color: '#ff6b6b' }}>{error || retellError}</p>
                             <button onClick={() => navigate('/dashboard')} style={{ padding: '10px 20px', cursor: 'pointer' }}>Exit</button>
+                        </div>
+                    )}
+
+                    {/* Processing Overlay */}
+                    {isProcessing && (
+                        <div style={{
+                            position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+                            backgroundColor: 'rgba(32, 33, 36, 0.95)', color: '#fff',
+                            display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', zIndex: 60
+                        }}>
+                            <div className="processing-spinner" style={{ width: '40px', height: '40px', border: '3px solid rgba(255,255,255,0.3)', borderRadius: '50%', borderTopColor: '#fff', animation: 'spin 1s ease-in-out infinite', marginBottom: '20px' }}></div>
+                            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                            <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: '500' }}>Processing Interview...</h3>
+                            <p style={{ color: '#9aa0a6', marginTop: '10px', fontSize: '0.9rem', textAlign: 'center', maxWidth: '80%' }}>
+                                Please wait while our AI analyzes your performance and generates detailed feedback. This takes about 5-10 seconds.
+                            </p>
                         </div>
                     )}
 
