@@ -28,7 +28,7 @@ const AdminLayout = () => {
             >
                 <div className="admin-logo">
                     <Shield className="text-blue-500" size={32} />
-                    <span>AdminPanel</span>
+                    <span>Infinity AdminPanel</span>
                 </div>
 
                 <nav className="admin-nav">
@@ -44,10 +44,7 @@ const AdminLayout = () => {
                         <Video size={20} />
                         <span>Live Monitor</span>
                     </NavLink>
-                    <NavLink to="/admin/newsletter" className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
-                        <Mail size={20} />
-                        <span>Newsletter</span>
-                    </NavLink>
+
                     <NavLink to="/admin/feedback" className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
                         <MessageSquare size={20} />
                         <span>User Feedback</span>

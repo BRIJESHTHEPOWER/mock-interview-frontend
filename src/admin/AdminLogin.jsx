@@ -55,8 +55,8 @@ const AdminLogin = () => {
                 className="admin-login-card"
             >
                 <div className="admin-login-header">
-                    <h2>{isSignup ? 'Create Admin Account' : 'Admin Portal'}</h2>
-                    <p>{isSignup ? 'Register New Transport' : 'Secure Access Only'}</p>
+                    <h2>{isSignup ? 'Create Infinity Admin' : 'Infinity Admin Portal'}</h2>
+                    <p>{isSignup ? 'Register New Admin' : 'Secure Access Only'}</p>
                 </div>
 
                 {error && (

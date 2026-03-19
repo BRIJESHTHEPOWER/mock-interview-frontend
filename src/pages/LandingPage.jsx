@@ -3,10 +3,11 @@
 // ============================================
 // Cinematic frontpage with Hero, Testimonials, and Footer
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { db } from '../config/firebase';
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import logo from '../assets/logo.png';
@@ -55,7 +56,8 @@ const TileGrid = () => {
 
 const VideoBackground = () => {
     const [activeIndex, setActiveIndex] = useState(0);
-    const [loadedCount, setLoadedCount] = useState(0);
+    const [ready, setReady] = useState(false);
+    const loadedRef = useRef(0);
     const totalFrames = 30;
 
     // Generate frame paths once
@@ -63,21 +65,30 @@ const VideoBackground = () => {
         `/ezgif-frame-${String(i + 1).padStart(3, '0')}.jpg`
     ), []);
 
-    useEffect(() => {
-        // Only start animation when all images are loaded
-        if (loadedCount < totalFrames) return;
-
-        const interval = setInterval(() => {
-            setActiveIndex(prev => (prev + 1) % totalFrames);
-        }, 120); // 120ms = Slower cinematic motion ~8fps
-
-        return () => clearInterval(interval);
-    }, [loadedCount]);
-
     const handleImageLoad = () => {
-        setLoadedCount(prev => prev + 1);
+        loadedRef.current += 1;
+        if (loadedRef.current >= totalFrames) {
+            setReady(true);
+        }
     };
 
+    // Fallback: if images are cached they won't fire onLoad.
+    // After 800ms, force-start the animation regardless.
+    useEffect(() => {
+        const t = setTimeout(() => setReady(true), 800);
+        return () => clearTimeout(t);
+    }, []);
+
+    useEffect(() => {
+        if (!ready) return;
+        const interval = setInterval(() => {
+            setActiveIndex(prev => (prev + 1) % totalFrames);
+        }, 120); // ~8fps cinematic motion
+        return () => clearInterval(interval);
+    }, [ready]);
+
+    // GIF plays in BOTH dark and light mode
+    // Light mode appearance is handled by CSS overlay
     return (
         <div className="video-background">
             <div className="video-overlay"></div>
@@ -89,7 +100,7 @@ const VideoBackground = () => {
                     alt=""
                     className={`frame-image ${index === activeIndex ? 'active' : ''}`}
                     onLoad={handleImageLoad}
-                    onError={handleImageLoad} // Count errors too to avoid stalling
+                    onError={handleImageLoad}
                     loading="eager"
                 />
             ))}
@@ -129,6 +140,32 @@ const TestimonialAvatar = ({ avatar, name }) => {
         </div>
     );
 };
+
+// ── Scroll-Reveal Hook ──────────────────────────────────────────────────────
+function useScrollReveal(deps = []) {
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target); // fire once
+                    }
+                });
+            },
+            { threshold: 0.12, rootMargin: '0px 0px -60px 0px' }
+        );
+
+        const targets = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+        targets.forEach((el) => {
+            // Skip already-visible elements
+            if (!el.classList.contains('visible')) observer.observe(el);
+        });
+
+        return () => observer.disconnect();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, deps);
+}
 
 export default function LandingPage() {
     const navigate = useNavigate();
@@ -236,6 +273,7 @@ export default function LandingPage() {
 
     const [testimonials, setTestimonials] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
+    useScrollReveal([testimonials]);
 
     // Newsletter State
     const [email, setEmail] = useState('');
@@ -361,26 +399,31 @@ export default function LandingPage() {
     return (
         <div className="landing-container">
 
-            {/* Fixed video backdrop — position:fixed sits behind all page content.
-                Other sections have solid backgrounds so they cover it when scrolled. */}
-            <VideoBackground />
-
             {/* Hero Section */}
             <section className="hero-section">
+                {/* Video backdrop — position:absolute fills the hero section. */}
+                <VideoBackground />
+
                 <div className="hero-content">
+                    {/* Animated badge */}
+                    <span className="hero-badge">🚀 AI-Powered Mock Interviews</span>
+
                     <h1 className="hero-title">
                         Forge Your Future <br />
                         <span className="gradient-text">Beyond Limits</span>
                     </h1>
+
                     <p className="hero-subtitle">
                         Where ambition meets artificial intelligence. Simulate reality,
                         conquer the pressure, and unlock the career you deserve.
                     </p>
-                    <button onClick={handleStartInterview} className="cta-btn pulse-animation">
-                        Start Mock Interview
-                    </button>
-                </div>
 
+                    <button onClick={handleStartInterview} className="cta-btn pulse-animation">
+                        ⚡ Start Mock Interview
+                    </button>
+
+
+                </div>
             </section>
 
 
@@ -442,16 +485,16 @@ export default function LandingPage() {
             {/* Quote Section */}
             <section className="quote-section">
                 <div className="quote-container">
-                    <p className="powerful-quote">
+                    <p className="powerful-quote reveal">
                         "Success happens when opportunity meets preparation."
                     </p>
-                    <span className="quote-author">— Lucius Annaeus Seneca</span>
+                    <span className="quote-author reveal delay-2">— Lucius Annaeus Seneca</span>
                 </div>
             </section>
 
             {/* Future Plans Section */}
             <section className="future-plans-section">
-                <h2 className="section-title">Future Roadmap</h2>
+                <h2 className="section-title reveal">Future Roadmap</h2>
                 <div className="future-grid">
                     {[
                         {
@@ -485,7 +528,7 @@ export default function LandingPage() {
                             icon: "🏢"
                         }
                     ].map((plan, index) => (
-                        <div key={index} className="future-card">
+                        <div key={index} className={`future-card reveal delay-${(index % 3) + 1}`}>
                             <div className="future-icon">{plan.icon}</div>
                             <h3>{plan.title}</h3>
                             <p>{plan.desc}</p>
@@ -496,7 +539,7 @@ export default function LandingPage() {
 
             {/* Testimonials Section */}
             <section className="testimonials-section">
-                <h2 className="section-title">Success Stories</h2>
+                <h2 className="section-title reveal">Success Stories</h2>
 
                 {testimonials.length > 0 ? (
                     <div className="testimonials-carousel-container">
@@ -534,7 +577,7 @@ export default function LandingPage() {
 
             {/* FAQ Section */}
             <section className="faq-section">
-                <h2 className="section-title">Frequently Asked Questions</h2>
+                <h2 className="section-title reveal">Frequently Asked Questions</h2>
                 <div className="faq-container">
                     {[
                         {
@@ -554,7 +597,7 @@ export default function LandingPage() {
                             a: "Your privacy is our top priority. All interview sessions and personal data are encrypted and stored securely. We do not share your personal interview recordings with third parties."
                         }
                     ].map((item, index) => (
-                        <details key={index} className="faq-item">
+                        <details key={index} className={`faq-item reveal delay-${index + 1}`}>
                             <summary className="faq-question">
                                 {item.q}
                                 <span className="faq-icon">▼</span>
@@ -579,22 +622,20 @@ export default function LandingPage() {
                     </div>
                     <div className="footer-links">
                         <div className="link-col">
-                            <h4>Platform</h4>
-                            <Link to="/features">Features</Link>
-                            <Link to="/pricing">Pricing</Link>
-                            <Link to="/enterprise">Enterprise</Link>
+                            <h4>Resources</h4>
+                            <Link to="/dashboard">Dashboard</Link>
+                            <Link to="/feedback">Feedback</Link>
                             <Link to="/login">Login</Link>
                         </div>
                         <div className="link-col">
-                            <h4>Resources</h4>
-                            <Link to="/blog">Blog</Link>
-                            <Link to="/guide">Guide</Link>
-                            <Link to="/help-center">Help Center</Link>
+                            <h4>About</h4>
+                            <Link to="/about">About Us</Link>
+                            <Link to="/contact">Contact Us</Link>
                         </div>
                         <div className="link-col">
                             <h4>Legal</h4>
-                            <Link to="/privacy">Privacy</Link>
-                            <Link to="/terms">Terms</Link>
+                            <Link to="/privacy">Privacy Policy</Link>
+                            <Link to="/terms">Terms & Conditions</Link>
                         </div>
                     </div>
 

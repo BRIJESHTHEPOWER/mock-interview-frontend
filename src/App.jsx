@@ -15,6 +15,10 @@ import Feedback from './pages/Feedback';
 import FeedbackDetails from './pages/FeedbackDetails';
 import ChatbotPage from './pages/ChatbotPage';
 import Placeholder from './pages/Placeholder';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import AboutUs from './pages/AboutUs';
+import ContactUs from './pages/ContactUs';
 
 
 import Navbar from './components/Navbar';
@@ -39,7 +43,6 @@ import AdminLogin from './admin/AdminLogin';
 import AdminDashboard from './admin/AdminDashboard';
 import AdminCandidates from './admin/AdminCandidates';
 import AdminLiveInterviews from './admin/AdminLiveInterviews';
-import AdminNewsletter from './admin/AdminNewsletter';
 import AdminFeedback from './admin/AdminFeedback';
 
 // Admin Protected Route
@@ -65,7 +68,6 @@ function AppRoutes() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="candidates" element={<AdminCandidates />} />
           <Route path="live-interviews" element={<AdminLiveInterviews />} />
-          <Route path="newsletter" element={<AdminNewsletter />} />
           <Route path="feedback" element={<AdminFeedback />} />
         </Route>
 
@@ -143,8 +145,10 @@ function AppRoutes() {
         <Route path="/blog" element={<><Navbar /><Placeholder title="Our Blog" /><FloatingChatbot /></>} />
         <Route path="/guide" element={<><Navbar /><Placeholder title="User Guide" /><FloatingChatbot /></>} />
         <Route path="/help-center" element={<><Navbar /><Placeholder title="Help Center" /><FloatingChatbot /></>} />
-        <Route path="/privacy" element={<><Navbar /><Placeholder title="Privacy Policy" /><FloatingChatbot /></>} />
-        <Route path="/terms" element={<><Navbar /><Placeholder title="Terms of Service" /><FloatingChatbot /></>} />
+        <Route path="/privacy" element={<><Navbar /><PrivacyPolicy /><FloatingChatbot /></>} />
+        <Route path="/terms" element={<><Navbar /><TermsOfService /><FloatingChatbot /></>} />
+        <Route path="/about" element={<><Navbar /><AboutUs /><FloatingChatbot /></>} />
+        <Route path="/contact" element={<><Navbar /><ContactUs /><FloatingChatbot /></>} />
 
         {/* 404 catch-all */}
         <Route path="*" element={<Navigate to="/" />} />

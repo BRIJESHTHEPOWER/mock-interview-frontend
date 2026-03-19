@@ -45,23 +45,9 @@ const AdminNewsletter = () => {
 
             const subscribers = data.subscribers || [];
 
-            // If no subscribers, maybe fallback to users or error?
-            // User specifically asked for footer subscribers.
+            // Strict requirement: Only send to footer subscribers.
             if (subscribers.length === 0) {
-                // Optional: Fallback to users if empty? Or just warn.
-                // let's try users if subscribers are empty for demo purposes, or just throw.
-                // "No subscribers found. Have people registered via footer?"
-                if (confirm("No footer subscribers found. Send to all registered users instead?")) {
-                    const userRes = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/admin/users`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    const userData = await userRes.json();
-                    if (userData.users) {
-                        subscribers.push(...userData.users); // duck typing: users also have email field
-                    }
-                } else {
-                    throw new Error("No subscribers found.");
-                }
+                throw new Error("No footer subscribers found. Users must subscribe via the footer first.");
             }
 
             // 2. Filter valid emails

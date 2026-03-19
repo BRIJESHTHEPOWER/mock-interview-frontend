@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Star, MessageSquare, User, Tag } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Star, MessageSquare, User, Tag, Search, Eye, Trash2, X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import './Admin.css';
 
@@ -9,6 +9,8 @@ const AdminFeedback = () => {
     const [feedbackList, setFeedbackList] = useState([]);
     const [users, setUsers] = useState({});
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedFeedback, setSelectedFeedback] = useState(null);
 
     const fetchUsers = async () => {
         try {
@@ -60,6 +62,31 @@ const AdminFeedback = () => {
         return user ? (user.displayName || user.email) : 'Unknown User';
     };
 
+    const handleDelete = async (id) => {
+        if (!window.confirm("Are you sure you want to permanently delete this feedback?")) return;
+        try {
+            const token = await currentUser.getIdToken();
+            await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/admin/feedback/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            fetchFeedback(); // Refresh
+        } catch (error) {
+            console.error("Error deleting feedback", error);
+        }
+    };
+
+    let filteredFeedback = feedbackList;
+    if (searchTerm) {
+        const lowerSearch = searchTerm.toLowerCase();
+        filteredFeedback = feedbackList.filter(item => {
+            const name = getUserName(item.userId).toLowerCase();
+            const category = (item.category || '').toLowerCase();
+            const message = (item.message || '').toLowerCase();
+            return name.includes(lowerSearch) || category.includes(lowerSearch) || message.includes(lowerSearch);
+        });
+    }
+
     const renderStars = (rating) => {
         return [...Array(5)].map((_, i) => (
             <Star
@@ -80,6 +107,17 @@ const AdminFeedback = () => {
                 </div>
             </header>
 
+            <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.05)', padding: '10px 16px', borderRadius: '12px', width: '100%', maxWidth: '400px', border: '1px solid var(--admin-border)' }}>
+                <Search size={20} color="#94a3b8" style={{ marginRight: '10px' }} />
+                <input 
+                    type="text" 
+                    placeholder="Search user, category, or message..." 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{ background: 'transparent', border: 'none', color: '#fff', width: '100%', outline: 'none', fontSize: '1rem' }}
+                />
+            </div>
+
             <div className="stat-card" style={{ padding: 0 }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', color: '#e2e8f0' }}>
                     <thead style={{ background: 'rgba(0,0,0,0.2)' }}>
@@ -89,10 +127,11 @@ const AdminFeedback = () => {
                             <th style={{ padding: '16px' }}>Category</th>
                             <th style={{ padding: '16px' }}>Message</th>
                             <th style={{ padding: '16px' }}>Date</th>
+                            <th style={{ padding: '16px' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {feedbackList.map(item => (
+                        {filteredFeedback.map(item => (
                             <motion.tr
                                 key={item.id}
                                 initial={{ opacity: 0 }}
@@ -129,18 +168,88 @@ const AdminFeedback = () => {
                                 <td style={{ padding: '16px', color: '#94a3b8', fontSize: '0.9rem' }}>
                                     {new Date(item.createdAt).toLocaleDateString()}
                                 </td>
+                                <td style={{ padding: '16px' }}>
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                        <button
+                                            style={{ background: 'rgba(59, 130, 246, 0.1)', border: 'none', color: '#3b82f6', padding: '8px', borderRadius: '8px', cursor: 'pointer' }}
+                                            onClick={() => setSelectedFeedback(item)}
+                                            title="View Details"
+                                        >
+                                            <Eye size={16} />
+                                        </button>
+                                        <button
+                                            style={{ background: 'rgba(239, 68, 68, 0.1)', border: 'none', color: '#ef4444', padding: '8px', borderRadius: '8px', cursor: 'pointer' }}
+                                            onClick={() => handleDelete(item.id)}
+                                            title="Delete Feedback"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    </div>
+                                </td>
                             </motion.tr>
                         ))}
-                        {feedbackList.length === 0 && (
+                        {filteredFeedback.length === 0 && (
                             <tr>
-                                <td colSpan="5" style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
-                                    No feedback received yet.
+                                <td colSpan="6" style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
+                                    No feedback found.
                                 </td>
                             </tr>
                         )}
                     </tbody>
                 </table>
             </div>
+
+            {/* Details Modal */}
+            <AnimatePresence>
+                {selectedFeedback && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="admin-modal-overlay"
+                        onClick={() => setSelectedFeedback(null)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            className="admin-modal-content"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="admin-modal-header">
+                                <h2>Feedback Details</h2>
+                                <button onClick={() => setSelectedFeedback(null)} className="close-btn"><X size={20} /></button>
+                            </div>
+
+                            <div className="admin-modal-body">
+                                <div className="detail-section">
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.5rem' }}>
+                                        <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '18px', fontWeight: 'bold' }}>
+                                            {getUserName(selectedFeedback.userId).charAt(0).toUpperCase()}
+                                        </div>
+                                        <div>
+                                            <h3 style={{ margin: 0, fontSize: '1.1rem' }}>{getUserName(selectedFeedback.userId)}</h3>
+                                            <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.9rem' }}>{selectedFeedback.category} • {new Date(selectedFeedback.createdAt).toLocaleString()}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="detail-section">
+                                    <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#e2e8f0', marginBottom: '10px' }}><Star size={16} /> Rating</h4>
+                                    <div style={{ display: 'flex', gap: '4px' }}>{renderStars(selectedFeedback.rating)}</div>
+                                </div>
+
+                                <div className="detail-section">
+                                    <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#e2e8f0', marginBottom: '10px' }}><MessageSquare size={16} /> Message</h4>
+                                    <div className="detail-box" style={{ background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '8px', lineHeight: '1.6' }}>
+                                        {selectedFeedback.message.split('\n').map((line, i) => <p key={i} style={{ margin: 0, marginBottom: '8px' }}>{line}</p>)}
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

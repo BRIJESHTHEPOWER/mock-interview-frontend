@@ -62,31 +62,33 @@ const AdminDashboard = () => {
         <div className="admin-page">
             <header className="admin-header">
                 <div>
-                    <h1 className="admin-title">Dashboard Overview</h1>
+                    <h1 className="admin-title">Infinity Dashboard</h1>
                     <p style={{ color: 'var(--admin-text-muted)' }}>Welcome back, Admin</p>
                 </div>
             </header>
 
             <div className="stats-grid">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="stat-card"
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => navigate('/admin/live-interviews')}
-                    whileHover={{ translateY: -5, boxShadow: '0 10px 25px -5px rgba(239, 68, 68, 0.3)' }}
-                >
-                    <div className="stat-card-header">
-                        <div>
-                            <div className="stat-value">{stats.liveInterviews}</div>
-                            <div className="stat-label">Live Interviews</div>
+                {stats.liveInterviews > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="stat-card"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => navigate('/admin/live-interviews')}
+                        whileHover={{ translateY: -5, boxShadow: '0 10px 25px -5px rgba(239, 68, 68, 0.3)' }}
+                    >
+                        <div className="stat-card-header">
+                            <div>
+                                <div className="stat-value">{stats.liveInterviews}</div>
+                                <div className="stat-label">Live Interviews</div>
+                            </div>
+                            <div className="stat-icon" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>
+                                <Video size={24} />
+                            </div>
                         </div>
-                        <div className="stat-icon" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>
-                            <Video size={24} />
-                        </div>
-                    </div>
-                </motion.div>
+                    </motion.div>
+                )}
 
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

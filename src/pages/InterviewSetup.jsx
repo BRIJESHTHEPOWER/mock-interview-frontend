@@ -49,16 +49,19 @@ export default function InterviewSetup() {
 
     // Handle starting interview
     const handleStartInterview = () => {
-        const selectedRole = jobRole === 'custom' ? customRole : jobRole;
+        const selectedRole = jobRole === 'custom' ? customRole.trim() : jobRole.trim();
 
-        if (!selectedRole || selectedRole.trim() === '') {
+        if (!selectedRole || selectedRole === '') {
             setError('Please select or enter a job role');
             return;
         }
 
-        // Navigate to interview page with job role
+        setLoading(true);
+        setError('');
+
+        // Navigate to interview page with job role in router state
         navigate('/interview', {
-            state: { jobRole: selectedRole.trim() }
+            state: { jobRole: selectedRole }
         });
     };
 

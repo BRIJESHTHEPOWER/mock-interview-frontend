@@ -40,6 +40,13 @@
   --gradient-main: linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%);
 }
 
+/* html always stays dark so the fixed GIF (z-index: 0, position: fixed)
+   in the hero section always has a dark canvas behind it — both themes.
+   Page sections with explicit background-color cover this correctly. */
+html {
+  background-color: #050505;
+}
+
 * {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   box-sizing: border-box;
@@ -52,7 +59,10 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--bg-primary);
+  /* Transparent so the dark html bg shows through the hero —
+     the GIF (z-index: 0, fixed) renders on top of the html bg.
+     Other pages/sections set their own explicit background. */
+  background-color: transparent;
   color: var(--text-primary);
   overflow-x: hidden;
 }

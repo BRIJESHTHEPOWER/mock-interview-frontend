@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, Video, Eye, X, MessageSquare, FileText, User } from 'lucide-react';
+import { Trash2, Video, Eye, X, MessageSquare, FileText, User, Search } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import './Admin.css';
 
@@ -10,6 +10,7 @@ const AdminLiveInterviews = () => {
     const [users, setUsers] = useState({}); // Map uid -> user data
     const [loading, setLoading] = useState(true);
     const [selectedInterview, setSelectedInterview] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
 
     // Fetch Users to map IDs to Names
     const fetchUsers = async () => {
@@ -77,9 +78,21 @@ const AdminLiveInterviews = () => {
         }
     };
 
-    // Filter for Live vs Others
-    const liveInterviews = interviews.filter(i => i.status === 'started');
-    const pastInterviews = interviews.filter(i => i.status !== 'started');
+    const handleDelete = async (e, id) => {
+        e.stopPropagation(); // Prevent opening modal
+        if (!window.confirm("Are you sure you want to permanently delete this interview record?")) return;
+
+        try {
+            const token = await currentUser.getIdToken();
+            await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/admin/interviews/${id}/delete`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            fetchInterviews(); // Refresh
+        } catch (error) {
+            console.error("Error deleting interview", error);
+        }
+    };
 
     const getUserName = (uid) => {
         if (!uid) return 'Unknown Candidate';
@@ -92,6 +105,22 @@ const AdminLiveInterviews = () => {
         const user = users[uid];
         return user ? user.email : '';
     };
+
+    // Filter for Live vs Others with Search
+    let liveInterviews = interviews.filter(i => i.status === 'active');
+    let pastInterviews = interviews.filter(i => i.status !== 'active');
+
+    if (searchTerm) {
+        const lowerSearch = searchTerm.toLowerCase();
+        const matchesSearch = (i) => {
+            const name = getUserName(i.userId).toLowerCase();
+            const email = getUserEmail(i.userId).toLowerCase();
+            const role = (i.jobRole || '').toLowerCase();
+            return name.includes(lowerSearch) || email.includes(lowerSearch) || role.includes(lowerSearch);
+        };
+        liveInterviews = liveInterviews.filter(matchesSearch);
+        pastInterviews = pastInterviews.filter(matchesSearch);
+    }
 
     const InterviewRow = ({ interview, isLive }) => (
         <motion.tr
@@ -147,19 +176,36 @@ const AdminLiveInterviews = () => {
                     </button>
                 )}
                 {!isLive && (
-                    <button
-                        style={{
-                            background: 'rgba(59, 130, 246, 0.1)',
-                            border: 'none',
-                            color: '#3b82f6',
-                            padding: '8px',
-                            borderRadius: '8px',
-                            cursor: 'pointer'
-                        }}
-                        onClick={() => setSelectedInterview(interview)}
-                    >
-                        <Eye size={16} />
-                    </button>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                        <button
+                            style={{
+                                background: 'rgba(59, 130, 246, 0.1)',
+                                border: 'none',
+                                color: '#3b82f6',
+                                padding: '8px',
+                                borderRadius: '8px',
+                                cursor: 'pointer'
+                            }}
+                            onClick={() => setSelectedInterview(interview)}
+                            title="View Details"
+                        >
+                            <Eye size={16} />
+                        </button>
+                        <button
+                            style={{
+                                background: 'rgba(239, 68, 68, 0.1)',
+                                border: 'none',
+                                color: '#ef4444',
+                                padding: '8px',
+                                borderRadius: '8px',
+                                cursor: 'pointer'
+                            }}
+                            onClick={(e) => handleDelete(e, interview.id)}
+                            title="Delete Record"
+                        >
+                            <Trash2 size={16} />
+                        </button>
+                    </div>
                 )}
             </td>
         </motion.tr>
@@ -173,6 +219,17 @@ const AdminLiveInterviews = () => {
                     <p style={{ color: 'var(--admin-text-muted)' }}>Track active and past interviews</p>
                 </div>
             </header>
+
+            <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.05)', padding: '10px 16px', borderRadius: '12px', width: '100%', maxWidth: '400px', border: '1px solid var(--admin-border)' }}>
+                <Search size={20} color="#94a3b8" style={{ marginRight: '10px' }} />
+                <input 
+                    type="text" 
+                    placeholder="Search candidate, email, or role..." 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{ background: 'transparent', border: 'none', color: '#fff', width: '100%', outline: 'none', fontSize: '1rem' }}
+                />
+            </div>
 
             {/* Live Section */}
             {liveInterviews.length > 0 && (

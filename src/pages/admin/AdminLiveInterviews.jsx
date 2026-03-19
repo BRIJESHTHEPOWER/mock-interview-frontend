@@ -55,8 +55,8 @@ const AdminLiveInterviews = () => {
     };
 
     // Filter for Live vs Others
-    const liveInterviews = interviews.filter(i => i.status === 'started');
-    const pastInterviews = interviews.filter(i => i.status !== 'started');
+    const liveInterviews = interviews.filter(i => i.status === 'active');
+    const pastInterviews = interviews.filter(i => i.status !== 'active');
 
     const InterviewRow = ({ interview, isLive }) => (
         <motion.tr
