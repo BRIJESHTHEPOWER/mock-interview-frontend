@@ -172,6 +172,9 @@ export default function Interview() {
                 errorMessage = 'Connection timeout. Please check your internet connection.';
             } else if (err.response?.status === 0) {
                 errorMessage = 'Cannot connect to server. Please check your internet connection.';
+            } else if (err.response?.data?.detail) {
+                // Show the specific Retell error message from backend
+                errorMessage = `Error: ${err.response.data.detail}`;
             } else if (err.response?.data?.error) {
                 errorMessage = err.response.data.error;
             } else if (err.message) {
