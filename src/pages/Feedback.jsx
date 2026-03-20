@@ -5,6 +5,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { BACKEND_URL } from '../config/api';
 import './Feedback.css';
 
 export default function Feedback() {
@@ -23,7 +24,7 @@ export default function Feedback() {
         try {
             const token = currentUser ? await currentUser.getIdToken() : null;
 
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/feedback`, {
+            const response = await fetch(`${BACKEND_URL}/api/feedback`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

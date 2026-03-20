@@ -12,14 +12,9 @@ import { ref, set, remove } from 'firebase/database';
 import { db, rtdb } from '../config/firebase';
 import axios from 'axios';
 import AIAvatar from '../components/AIAvatar';
+import { BACKEND_URL } from '../config/api';
 import './Interview.css';
 
-// LIGHT THEME STYLES
-// Main background: #f8f9fa
-// Footer/Bar: #ffffff
-// Text: #202124
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
 export default function Interview() {
     const location = useLocation();

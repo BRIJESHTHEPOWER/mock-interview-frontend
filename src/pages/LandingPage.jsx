@@ -12,7 +12,9 @@ import { db } from '../config/firebase';
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import logo from '../assets/logo.png';
 import InfinityLoader from '../components/InfinityLoader';
+import { BACKEND_URL } from '../config/api';
 import './LandingPage.css';
+
 
 const TileGrid = () => {
     const [tiles, setTiles] = useState([]);
@@ -310,7 +312,7 @@ export default function LandingPage() {
             );
 
             // 2. Save to Backend Database
-            await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/subscribe`, {
+            await fetch(`${BACKEND_URL}/api/subscribe`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })

@@ -44,21 +44,32 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         let mounted = true;
 
-        // Timeout to prevent infinite loading state
+        // Timeout to prevent infinite loading state (3s is enough — faster on cold starts)
         const timer = setTimeout(() => {
             if (mounted && loading) {
                 console.warn("Auth state change timed out, forcing render");
                 setLoading(false);
             }
-        }, 5000);
+        }, 3000);
 
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (mounted) {
-                setCurrentUser(user);
-                setLoading(false);
-                clearTimeout(timer);
+        const unsubscribe = onAuthStateChanged(
+            auth,
+            (user) => {
+                if (mounted) {
+                    setCurrentUser(user);
+                    setLoading(false);
+                    clearTimeout(timer);
+                }
+            },
+            (error) => {
+                // Firebase error (e.g. network failure) — force unblock the UI
+                console.error("Firebase auth error:", error);
+                if (mounted) {
+                    setLoading(false);
+                    clearTimeout(timer);
+                }
             }
-        });
+        );
 
         // Cleanup subscription
         return () => {
