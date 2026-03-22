@@ -581,8 +581,7 @@
 
 .frame-image {
     width: 100%;
-    height: 100vh;
-    height: 100dvh;
+    height: 100%;
     object-fit: cover;
     object-position: center center;
     position: absolute;
@@ -735,6 +734,45 @@
     line-height: 1.4;
 }
 
+.word-reveal-quote {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    column-gap: 0.28em;
+    row-gap: 0.1em;
+}
+
+.quote-word, .quote-mark {
+    opacity: 0;
+    transform: translateY(25px) scale(0.95);
+    filter: blur(8px);
+    display: inline-block;
+    will-change: transform, opacity, filter;
+}
+
+.quote-word-visible {
+    animation: quote-word-reveal 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes quote-word-reveal {
+    0% {
+        opacity: 0;
+        transform: translateY(25px) scale(0.95);
+        filter: blur(8px);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(-2px) scale(1.02);
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+        text-shadow: 0 0 18px rgba(0, 200, 255, 0.45);
+    }
+}
+
 .quote-author {
     font-size: 1rem;
     color: var(--neon-blue);
@@ -856,6 +894,47 @@
     position: relative;
     padding: 16px 0 44px;
     --items-per-page: 3;
+}
+
+/* Testimonial Navigation Arrows */
+.carousel-arrow {
+    position: absolute;
+    top: 45%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.4);
+    color: var(--neon-blue);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(8px);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.carousel-arrow:hover {
+    background: rgba(0, 200, 255, 0.25);
+    border-color: rgba(0, 200, 255, 0.5);
+    box-shadow: 0 0 15px rgba(0, 200, 255, 0.4);
+    color: #fff;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-arrow:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.left-arrow {
+    left: 10px;
+}
+
+.right-arrow {
+    right: 10px;
 }
 
 .testimonials-track {

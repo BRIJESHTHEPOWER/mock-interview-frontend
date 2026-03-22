@@ -11,6 +11,13 @@ import { useTheme } from '../contexts/ThemeContext';
 import { db } from '../config/firebase';
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import logo from '../assets/logo.png';
+import nikshithPhoto from '../assets/Nikshith.jpeg';
+import varunphoto from '../assets/Varun.jpeg';
+import akshayanphoto from '../assets/Akshayan.jpeg';
+import deepthiphoto from '../assets/Deepthi.jpeg';
+import Rakshithaphoto from '../assets/Rakshitha.jpeg';
+import prathamphoto from '../assets/pratham.jpeg';
+import Thushanphoto from '../assets/Thushan.jpeg';
 import InfinityLoader from '../components/InfinityLoader';
 import { BACKEND_URL } from '../config/api';
 import './LandingPage.css';
@@ -140,6 +147,50 @@ const TestimonialAvatar = ({ avatar, name }) => {
         }}>
             {(name || 'U')[0].toUpperCase()}
         </div>
+    );
+};
+
+// ── Word-by-Word Quote Reveal ───────────────────────────────────────────────
+const QuoteWordReveal = ({ text }) => {
+    const containerRef = useRef(null);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.disconnect();
+                }
+            },
+            { threshold: 0.3 }
+        );
+
+        if (containerRef.current) {
+            observer.observe(containerRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
+
+    const words = text.split(' ');
+
+    return (
+        <p className="powerful-quote word-reveal-quote" ref={containerRef}>
+            {words.map((word, index) => {
+                const isFirst = index === 0;
+                const isLast = index === words.length - 1;
+                return (
+                    <span
+                        key={index}
+                        className={`quote-word ${isVisible ? 'quote-word-visible' : ''}`}
+                        style={{ animationDelay: `${index * 0.18}s` }}
+                    >
+                        {isFirst ? `"${word}` : word}{isLast ? '"' : ''}
+                    </span>
+                );
+            })}
+        </p>
     );
 };
 
@@ -328,13 +379,33 @@ export default function LandingPage() {
         }
     };
 
+    // Responsive item count for carousel logic
+    const getItemsPerPage = () => {
+        if (window.innerWidth <= 768) return 1;
+        if (window.innerWidth <= 1024) return 2;
+        return 3;
+    };
+
+    const handleNextTestimonial = () => {
+        if (testimonials.length === 0) return;
+        const maxIndex = testimonials.length - getItemsPerPage();
+        setCurrentIndex((prevIndex) => prevIndex >= maxIndex ? 0 : prevIndex + 1);
+    };
+
+    const handlePrevTestimonial = () => {
+        if (testimonials.length === 0) return;
+        const maxIndex = testimonials.length - getItemsPerPage();
+        setCurrentIndex((prevIndex) => prevIndex <= 0 ? maxIndex : prevIndex - 1);
+    };
+
     // Auto-scroll testimonials
     useEffect(() => {
         if (testimonials.length === 0) return;
 
         const interval = setInterval(() => {
+            const maxIndex = testimonials.length - getItemsPerPage();
             setCurrentIndex((prevIndex) =>
-                prevIndex === testimonials.length - 3 ? 0 : prevIndex + 1
+                prevIndex >= maxIndex ? 0 : prevIndex + 1
             );
         }, 5000); // Change every 5 seconds
 
@@ -346,52 +417,52 @@ export default function LandingPage() {
         const staticData = [
             {
                 id: 1,
-                name: "Sarah Jenkins",
+                name: "Nikshith",
                 role: "Software Engineer @ Google",
                 text: "The AI interviewer was indistinguishable from a real hiring manager. It helped me crack the L4 interview!",
-                avatar: "👩‍💻"
+                avatar: nikshithPhoto
             },
             {
                 id: 2,
-                name: "Michael Chen",
+                name: "pratham",
                 role: "Product Manager @ Uber",
                 text: "Infinity Platform gave me the confidence I needed. The cinematic visuals make it feel so high-stakes.",
-                avatar: "🚀"
+                avatar: prathamphoto
             },
             {
                 id: 3,
-                name: "David Smith",
+                name: "Rakshitha",
                 role: "Frontend Developer",
                 text: "This platform is amazing! The real-time feedback helped me improve my communication skills significantly.",
-                avatar: "👨‍💻"
+                avatar: Rakshithaphoto
             },
             {
                 id: 4,
-                name: "Emily Davis",
+                name: "Thushan",
                 role: "Data Scientist",
                 text: "I loved the immersive experience. It felt like I was in a real interview room. Highly recommended!",
-                avatar: "🧠"
+                avatar: Thushanphoto
             },
             {
                 id: 5,
-                name: "James Wilson",
+                name: "Deepthi",
                 role: "Full Stack Developer",
                 text: "Great tool for practice. The AI questions were very relevant to my tech stack. Helped me land my dream job.",
-                avatar: "💻"
+                avatar: deepthiphoto
             },
             {
                 id: 6,
-                name: "Jessica Taylor",
+                name: "Akshyan",
                 role: "UX Designer",
                 text: "The voice quality is incredible. It really feels like talking to a human. The feedback report was super detailed.",
-                avatar: "✨"
+                avatar: akshayanphoto
             },
             {
                 id: 7,
-                name: "Robert Brown",
+                name: "varun",
                 role: "Backend Engineer",
                 text: "Nice platform! It helped me identify my weak points in system design interviews. A must-try for everyone.",
-                avatar: "🛠️"
+                avatar: varunphoto
             }
         ];
 
@@ -487,10 +558,7 @@ export default function LandingPage() {
             {/* Quote Section */}
             <section className="quote-section">
                 <div className="quote-container">
-                    <p className="powerful-quote reveal">
-                        "Success happens when opportunity meets preparation."
-                    </p>
-                    <span className="quote-author reveal delay-2">— Lucius Annaeus Seneca</span>
+                    <QuoteWordReveal text="Practice until your fear has no place to stand." />
                 </div>
             </section>
 
@@ -545,6 +613,9 @@ export default function LandingPage() {
 
                 {testimonials.length > 0 ? (
                     <div className="testimonials-carousel-container">
+                        <button className="carousel-arrow left-arrow" onClick={handlePrevTestimonial} aria-label="Previous Testimonial">
+                            ❮
+                        </button>
                         <div
                             className="testimonials-track"
                             style={{
@@ -569,6 +640,9 @@ export default function LandingPage() {
                                 </div>
                             ))}
                         </div>
+                        <button className="carousel-arrow right-arrow" onClick={handleNextTestimonial} aria-label="Next Testimonial">
+                            ❯
+                        </button>
                     </div>
                 ) : (
                     <div className="loading-testimonials">

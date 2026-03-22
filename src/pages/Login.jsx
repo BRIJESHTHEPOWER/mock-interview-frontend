@@ -1,7 +1,4 @@
-// ============================================
-// LOGIN PAGE
-// ============================================
-// User authentication page with email/password login
+
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
