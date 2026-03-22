@@ -14,23 +14,11 @@ export const useRetell = () => {
     const [isAgentSpeaking, setIsAgentSpeaking] = useState(false);
 
     const retellClient = useRef(null);
-    const audioContextRef = useRef(null);
-    const gainNodeRef = useRef(null);
 
     // Initialize Retell client on mount
     useEffect(() => {
         try {
             retellClient.current = new RetellWebClient();
-
-            // Initialize Web Audio API for volume control
-            if (!audioContextRef.current) {
-                audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
-                gainNodeRef.current = audioContextRef.current.createGain();
-                // Set volume to 2.0 (200% - double the volume)
-                gainNodeRef.current.gain.value = 2.0;
-                gainNodeRef.current.connect(audioContextRef.current.destination);
-                console.log('🔊 Audio amplification enabled: 200% volume');
-            }
 
             // Set up event listeners
             retellClient.current.on('call_started', () => {
@@ -93,9 +81,6 @@ export const useRetell = () => {
             if (retellClient.current) {
                 retellClient.current.stopCall();
             }
-            if (audioContextRef.current) {
-                audioContextRef.current.close();
-            }
         };
     }, []);
 
@@ -113,32 +98,14 @@ export const useRetell = () => {
                 throw new Error('Retell client not initialized');
             }
 
-            // Start the call with credentials from backend
+            // Start the call using native WebRTC config (SDK v2)
+            // Let the SDK and browser negotiate sampleRate automatically to prevent hardware mismatches
             await retellClient.current.startCall({
-                callId,
-                accessToken,
-                // Optimized audio quality settings
-                sampleRate: 24000, // Higher sample rate for better quality
-                enableUpdate: true,
-                // Enhanced audio constraints for stability
-                audioConstraints: {
-                    echoCancellation: true,
-                    noiseSuppression: true,
-                    autoGainControl: true,
-                    // Additional constraints for better quality
-                    channelCount: 1,
-                    sampleSize: 16,
-                },
+                accessToken
             });
 
             setIsConnected(true);
             console.log('🎤 Call started successfully');
-
-            // Resume audio context if suspended (browser autoplay policy)
-            if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
-                await audioContextRef.current.resume();
-                console.log('🔊 Audio context resumed');
-            }
 
         } catch (err) {
             console.error('Failed to start call:', err);

@@ -278,18 +278,13 @@ export default function Interview() {
                     height: { ideal: isMobile ? 480 : 720 },
                     facingMode: 'user'
                 },
-                audio: {
-                    echoCancellation: true,
-                    noiseSuppression: true,
-                    autoGainControl: true,
-                    // Mobile-specific audio settings
-                    sampleRate: isMobile ? 16000 : 24000,
-                    channelCount: 1
-                }
+                // Do not request audio here to prevent locking the microphone from Retell SDK
+                audio: false
             };
 
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
-            console.log('✅ Camera/microphone access granted');
+            console.log('✅ Camera access granted');
+
             setLocalStream(stream);
             setIsCameraOn(true);
         } catch (err) {
