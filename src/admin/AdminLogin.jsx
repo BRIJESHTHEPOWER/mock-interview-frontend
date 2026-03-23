@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
-import { Lock, Mail, ChevronRight, AlertCircle } from 'lucide-react';
+import { Lock, Mail, ChevronRight, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import './Admin.css'; // We'll create this for shared admin styles
 
 const AdminLogin = () => {
@@ -11,6 +11,7 @@ const AdminLogin = () => {
     const [isSignup, setIsSignup] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const { login, signup } = useAuth(); // signup might need to be exported from AuthContext if not already
     const navigate = useNavigate();
 
@@ -77,15 +78,36 @@ const AdminLogin = () => {
                             required
                         />
                     </div>
-                    <div className="input-group">
+                    <div className="input-group" style={{ position: 'relative' }}>
                         <Lock className="input-icon" size={18} />
                         <input
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            style={{ paddingRight: '40px', width: '100%' }}
                         />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            style={{
+                                position: 'absolute',
+                                right: '15px',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer',
+                                color: '#9ca3af',
+                                display: 'flex',
+                                alignItems: 'center',
+                                padding: 0
+                            }}
+                            title={showPassword ? "Hide password" : "Show password"}
+                        >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
                     </div>
 
                     <button

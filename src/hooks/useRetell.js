@@ -1,7 +1,4 @@
-// ============================================
-// RETELL AI HOOK
-// ============================================
-// Custom hook for managing Retell AI voice interview sessions
+
 
 import { useState, useEffect, useRef } from 'react';
 import { RetellWebClient } from 'retell-client-js-sdk';
